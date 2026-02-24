@@ -3,13 +3,16 @@ import pandas as pd
 import requests
 import config
 
+max_results_returned = 10
+
 def call_get_arrivals(map_id: int) -> dict:
     arrivals_url = "http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx"
 
     payload = {
         "mapid": map_id,
         "key": config.settings.config["API"]["CTA_API_KEY"],
-        "outputType": "JSON"
+        "outputType": "JSON",
+        "max": max_results_returned
     }
 
     resp = requests.get(arrivals_url, params=payload)
@@ -20,7 +23,3 @@ def get_arrivals(map_id: int) -> pd.DataFrame:
     arrivals_resp = call_get_arrivals(map_id)
 
     return pd.DataFrame(arrivals_resp["ctatt"]["eta"])
-
-
-if __name__ == "__main__":
-    print(get_arrivals(40470))
