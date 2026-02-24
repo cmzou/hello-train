@@ -5,7 +5,7 @@ import config
 
 max_results_returned = 10
 
-def call_get_arrivals(map_id: int) -> dict:
+def call_get_train_arrivals(map_id: int) -> dict:
     arrivals_url = "http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx"
 
     payload = {
@@ -19,7 +19,7 @@ def call_get_arrivals(map_id: int) -> dict:
 
     return resp.json()
 
-def get_arrivals(map_id: int) -> pd.DataFrame:
-    arrivals_resp = call_get_arrivals(map_id)
+def get_train_arrivals(map_id: int) -> pd.DataFrame:
+    arrivals_resp = call_get_train_arrivals(map_id)
 
     return pd.DataFrame(arrivals_resp["ctatt"]["eta"])
