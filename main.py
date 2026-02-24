@@ -7,7 +7,7 @@ from inky.auto import auto
 
 inky_display = auto(ask_user=True, verbose=True)
 
-image_paths = ["hudson.png", "hudson2.png", "hudson3.png"]
+image_paths = ["hudson.png", "hudson2.png", "hudson3.png", "hudson4.png"]
 
 def get_current_time() -> str:
     current_time = datetime.datetime.today()

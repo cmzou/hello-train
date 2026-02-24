@@ -5,15 +5,16 @@ import yaml
 
 class Config:
     def __init__(self) -> None:
-        config = yaml.safe_load(open("./config.yml"))
+        self.config = yaml.safe_load(open("./config.yml"))
 
+config = Config()
 
 def call_get_arrivals(map_id: int) -> dict:
     arrivals_url = "http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx"
 
     payload = {
         "mapid": map_id,
-        "key": api_key,
+        "key": config.config["API"]["CTA_API_KEY"],
         "outputType": "JSON"
     }
 
