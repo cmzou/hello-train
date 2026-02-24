@@ -4,6 +4,8 @@ import requests
 import yaml
 
 class Config:
+    def __init__(self) -> None:
+        config = yaml.safe_load(open("./config.yml"))
 
 
 def call_get_arrivals(map_id: int) -> dict:
