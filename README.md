@@ -1,7 +1,7 @@
 # Usage
 
 ```python
-python draw_network.py
+uv run draw_network.py
 ```
 
 # References
