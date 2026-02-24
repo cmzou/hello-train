@@ -1,5 +1,22 @@
+import time
+from PIL import Image
+
+from inky.auto import auto
+
+inky = auto(ask_user=True, verbose=True)
+
+image_paths = ["hudson.png", "hudson2.png", "hudson3.png"]
+
+def display_images():
+    for image in image_paths:
+        image = Image.open(image_paths)
+        resizedimage = image.resize(inky.resolution)
+        inky.set_image(resizedimage)
+        inky.show()
+        time.sleep(5*60)
+
 def main():
-    print("Hello from hello-train!")
+    display_images()
 
 
 if __name__ == "__main__":
