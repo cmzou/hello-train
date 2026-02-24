@@ -1,20 +1,14 @@
 import pandas as pd
 
 import requests
-import yaml
-
-class Config:
-    def __init__(self) -> None:
-        self.config = yaml.safe_load(open("./config.yml"))
-
-config = Config()
+import config
 
 def call_get_arrivals(map_id: int) -> dict:
     arrivals_url = "http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx"
 
     payload = {
         "mapid": map_id,
-        "key": config.config["API"]["CTA_API_KEY"],
+        "key": config.settings.config["API"]["CTA_API_KEY"],
         "outputType": "JSON"
     }
 
