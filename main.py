@@ -11,7 +11,7 @@ image_paths = ["hudson.png", "hudson2.png", "hudson3.png"]
 def display_images():
     while True:
         image_path = random.choice(image_paths)
-        image = Image.open(image_path)
+        image = Image.open("./images/" + image_path)
         resizedimage = image.resize(inky.resolution)
         inky.set_image(resizedimage)
         inky.show()
