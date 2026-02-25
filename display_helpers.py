@@ -15,7 +15,7 @@ def draw_arrivals(arrivals_data: pd.DataFrame) -> None:
     image = Image.new("P", (inky_display.width, inky_display.height), inky_display.BLACK)
     draw = ImageDraw.Draw(image)
 
-    draw.rectangle((320, 320, 300, 300), fill=inky_display.BLUE)
+    draw.rectangle((50, 50, 200, 200), fill=inky_display.BLUE)
     draw.text((0, 0), f"Last Updated: {get_current_time()}", inky_display.BLACK)
 
     inky_display.set_image(image)
