@@ -3,11 +3,12 @@ import datetime
 import random
 from PIL import Image, ImageDraw
 
-from inky.auto import auto
+# from inky.auto import auto
 
 import data_parsers
+import display_helpers
 
-inky_display = auto(ask_user=True, verbose=True)
+# inky_display = auto(ask_user=True, verbose=True)
 
 station_data = {
     "staNm": ["Racine"],
@@ -18,4 +19,4 @@ station_data = {
 data_parsers.get_and_parse_data(station_data)
 
 if __name__ == "__main__":
-    print(station_data)
+    display_helpers.draw_arrivals(station_data["staData"][0])
