@@ -1,7 +1,7 @@
 import pandas as pd
 
 import requests
-import config
+import settings
 
 max_results_returned = 10
 
@@ -10,7 +10,7 @@ def call_get_train_arrivals(map_id: int) -> dict:
 
     payload = {
         "mapid": map_id,
-        "key": config.settings.config["API"]["CTA_API_KEY"],
+        "key": settings.settings.config["API"]["CTA_API_KEY"],
         "outputType": "JSON",
         "max": max_results_returned
     }
