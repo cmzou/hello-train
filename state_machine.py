@@ -57,6 +57,8 @@ def handle_button(event):
     if label == "C":
         switch_to_settings()
 
+def setup():
+    image_cycler.setup()
 
 def main():
     while True:
@@ -73,7 +75,8 @@ def main():
                 inky_display.show()
 
             case DisplayMode.CATS:
-                image_cycler.display_images()
+                image_cycler.displays["cat"].display_current_image()
+
             case DisplayMode.SETTINGS:
                 image = Image.new("P", (inky_display.width, inky_display.height), inky_display.BLACK)
                 draw = ImageDraw.Draw(image)

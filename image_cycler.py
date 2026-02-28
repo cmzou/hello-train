@@ -12,6 +12,8 @@ inky_display = auto(ask_user=True, verbose=True)
 image_saturation = 0.75
 sleep_seconds = 60 * 5
 
+displays = {}
+
 def get_current_time() -> str:
     current_time = datetime.datetime.today()
     return current_time.strftime("%Y/%m/%d %H:%M:%S")
@@ -51,6 +53,9 @@ class ImageDisplay:
     def set_current_image(self):
         self.current_image = random.choice(self.image_paths)
 
+    """
+    Display the current image
+    """
     def display_current_image(self):
         image = Image.open(self.current_image)
         resizedimage = image.resize(inky_display.resolution)
@@ -61,10 +66,9 @@ class ImageDisplay:
         inky_display.set_image(resizedimage, saturation=image_saturation)
         inky_display.show()
 
-
-def main():
+def setup():
+    cta_display = ImageDisplay("./ui/cta_ui.png")
     cat_display = ImageDisplay("./images")
-    cat_display.display_current_image()
 
-if __name__ == "__main__":
-    main()
+    displays["CTA"] = cta_display
+    displays["cat"] = cat_display
