@@ -19,13 +19,13 @@
 
 ## Cats Mode
 
-Any image included in the `/srv/train_networks/images/` folder will be used in Cats Mode.
+Any image included in the `./images/` folder will be used in Cats Mode.
 
 # Development
 
 ## Usage
 
-```python
+```sh
 uv run main.py
 ```
 
