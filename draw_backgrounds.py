@@ -70,11 +70,11 @@ Adds coordinates at key parts of the image for debugging purposes.
 def add_grid_coord(image: Image, color=inky_display.WHITE) -> Image:
     draw = ImageDraw.Draw(image)
 
-    draw.text((0, 50), "(0, 50)", inky_display.WHITE, font=fnt)
-    draw.text((50, 50), "(50, 50)", inky_display.WHITE, font=fnt)
-    draw.text((0, 200), "(0, 200)", inky_display.WHITE, font=fnt)
-    draw.text((0, 250), "(0, 250)", inky_display.WHITE, font=fnt)
-    draw.text((0, 300), "(0, 300)", inky_display.WHITE, font=fnt)
+    draw.text((0, 50), "(0, 50)", color, font=fnt)
+    draw.text((50, 50), "(50, 50)", color, font=fnt)
+    draw.text((0, 200), "(0, 200)", color, font=fnt)
+    draw.text((0, 250), "(0, 250)", color, font=fnt)
+    draw.text((0, 300), "(0, 300)", color, font=fnt)
 
     return image
 
