@@ -1,13 +1,17 @@
 import time
 import datetime
 import random
+import os
+
 from PIL import Image, ImageDraw
 
 from inky.auto import auto
 
 inky_display = auto(ask_user=True, verbose=True)
 
-image_paths = ["hudson.png", "hudson2.png", "hudson3.png", "hudson4.png"]
+image_dir = "./images"
+
+image_paths = [f for f in os.listdir(image_dir) if os.path.isfile(os.path.join(image_dir, f))]
 
 def get_current_time() -> str:
     current_time = datetime.datetime.today()
