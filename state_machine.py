@@ -61,6 +61,8 @@ def setup():
     image_cycler.setup()
 
 def main():
+    setup()
+
     while True:
         for event in request.read_edge_events():
             handle_button(event)
