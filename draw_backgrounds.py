@@ -3,6 +3,7 @@ import pandas as pd
 from PIL import Image, ImageDraw, ImageFont
 
 font_size = 13
+font_size_large = 20
 v_pad = 5 # num of pixels between each arrivals box
 h_pad = 15 # num of pixels between the sides
 
@@ -31,7 +32,8 @@ image = Image.new("P", (inky_display.width, inky_display.height), inky_display.B
 arrivals_offset = inky_display.height / 2
 
 # Fonts
-fnt = ImageFont.truetype("./fonts/FreeSans.otf", size=font_size)
+fnt_small = ImageFont.truetype("./fonts/FreeSans.otf", size=font_size)
+fnt_large = ImageFont.truetype("./fonts/FreeSansBold.otf", size=font_size_large)
 
 # Functions
 def get_current_time() -> str:
@@ -60,7 +62,24 @@ def create_arrivals_background(arrivals_data: pd.DataFrame, image: Image) -> Ima
             fill=train_to_colors[row["rt"]]
         )
 
-    draw.text((0, 0), f"Last Updated: {get_current_time()}", inky_display.WHITE, font=fnt)
+        min_text_width = 25
+
+        # Write arrivals text
+        draw.text(
+            (arrival_box_x1 + h_pad, (i_arrival_box_y1 + i_arrival_box_y2) / 2),
+            row["destNm"],
+            inky_display.WHITE,
+            font=fnt_large
+        )
+        draw.text(
+            (arrival_box_x2 - h_pad - min_text_width, (i_arrival_box_y1 + i_arrival_box_y2) / 2),
+            str(round(row["tTArr"])),
+            inky_display.WHITE,
+            font=fnt_large
+        )
+
+
+    draw.text((0, 0), f"Last Updated: {get_current_time()}", inky_display.WHITE, font=fnt_small)
 
     return image
 
@@ -70,11 +89,11 @@ Adds coordinates at key parts of the image for debugging purposes.
 def add_grid_coord(image: Image, color=inky_display.WHITE) -> Image:
     draw = ImageDraw.Draw(image)
 
-    draw.text((0, 50), "(0, 50)", color, font=fnt)
-    draw.text((50, 50), "(50, 50)", color, font=fnt)
-    draw.text((0, 200), "(0, 200)", color, font=fnt)
-    draw.text((0, 250), "(0, 250)", color, font=fnt)
-    draw.text((0, 300), "(0, 300)", color, font=fnt)
+    draw.text((0, 50), "(0, 50)", color, font=fnt_small)
+    draw.text((50, 50), "(50, 50)", color, font=fnt_small)
+    draw.text((0, 200), "(0, 200)", color, font=fnt_small)
+    draw.text((0, 250), "(0, 250)", color, font=fnt_small)
+    draw.text((0, 300), "(0, 300)", color, font=fnt_small)
 
     return image
 
@@ -110,7 +129,7 @@ if __name__ == "__main__":
     arrivals_data3 = pd.DataFrame({
         "staId": [40470, 40470, 40470],
         "staNm": ["Racine", "Racine", "Racine"],
-        "rt": ["Blue", "Red", "Blue"],
+        "rt": ["Blue", "Blue", "Blue"],
         "destNm": ["O'Hare", "O'Hare", "Forest Park"],
         "tTArr": [7.0, 5.0, 15.0],
         "isApp": [0, 0, 0],
@@ -120,3 +139,4 @@ if __name__ == "__main__":
     })
     image = create_arrivals_background(arrivals_data3, image)
     save_image(image, "./current_background.png")
+    image.show()
