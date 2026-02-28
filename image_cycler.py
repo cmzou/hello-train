@@ -12,7 +12,7 @@ inky_display = auto(ask_user=True, verbose=True)
 image_saturation = 0.75
 
 image_dir = "./images"
-image_paths = [f for f in os.listdir(image_dir) if os.path.isfile(os.path.join(image_dir, f))]
+image_paths = [os.path.join(image_dir, f) for f in os.listdir(image_dir) if os.path.isfile(os.path.join(image_dir, f))]
 
 def get_current_time() -> str:
     current_time = datetime.datetime.today()
