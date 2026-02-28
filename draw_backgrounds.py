@@ -4,7 +4,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 font_size = 13
 v_pad = 5 # num of pixels between each arrivals box
-h_pad = 25 # num of pixels between the sides
+h_pad = 15 # num of pixels between the sides
 
 train_to_colors = {
     "Blue": (0, 157, 220),
@@ -78,6 +78,12 @@ def add_grid_coord(image: Image, color=inky_display.WHITE) -> Image:
 
     return image
 
+"""
+Save the image out. This is because Inky Impressions renders it better as a PNG than PIL image.
+"""
+def save_image(image: Image, out_path: str) -> None:
+    image.save(out_path, "PNG")
+
 if __name__ == "__main__":
     arrivals_data1 = pd.DataFrame({
         "staId": [40470],
@@ -112,4 +118,5 @@ if __name__ == "__main__":
         "isDly": [0, 0, 0],
         "idFlt": [0, 0, 0]
     })
-    add_grid_coord(create_arrivals_background(arrivals_data2, image)).show()
+    image = create_arrivals_background(arrivals_data3, image)
+    save_image(image, "./current_background.png")
