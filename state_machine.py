@@ -6,11 +6,15 @@ import gpiod
 import gpiodevice
 from gpiod.line import Bias, Direction, Edge
 
+from threading import Event
+
 from PIL import Image, ImageDraw
 
 from inky.auto import auto as inky_auto
 
 inky_display = inky_auto(ask_user=True, verbose=True)
+
+sleep_seconds = 60 * 5
 
 class DisplayMode(Enum):
     CTA = auto()
@@ -31,6 +35,7 @@ line_config = dict.fromkeys(OFFSETS, INPUT)
 
 request = chip.request_lines(consumer="inky7-buttons", config=line_config)
 
+exit = Event()
 
 def switch_to_cta():
     global current_mode
@@ -65,7 +70,9 @@ def main():
 
     while True:
         for event in request.read_edge_events():
+            exit.set()
             handle_button(event)
+            exit.clear()
         match current_mode:
             case DisplayMode.CTA:
                 image = Image.new("P", (inky_display.width, inky_display.height), inky_display.BLACK)
@@ -77,7 +84,10 @@ def main():
                 inky_display.show()
 
             case DisplayMode.CATS:
-                image_cycler.displays["cat"].display_current_image()
+                while not exit.is_set():
+                    image_cycler.displays["cat"].set_current_image()
+                    image_cycler.displays["cat"].display_current_image()
+                    exit.wait(sleep_seconds)
 
             case DisplayMode.SETTINGS:
                 image = Image.new("P", (inky_display.width, inky_display.height), inky_display.BLACK)
