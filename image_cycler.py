@@ -9,8 +9,9 @@ from inky.auto import auto
 
 inky_display = auto(ask_user=True, verbose=True)
 
-image_dir = "./images"
+image_saturation = 0.75
 
+image_dir = "./images"
 image_paths = [f for f in os.listdir(image_dir) if os.path.isfile(os.path.join(image_dir, f))]
 
 def get_current_time() -> str:
@@ -26,7 +27,7 @@ def display_images():
         draw = ImageDraw.Draw(resizedimage)
         draw.text((0, 0), f"Last Updated: {get_current_time()}", inky_display.BLACK)
 
-        inky_display.set_image(resizedimage)
+        inky_display.set_image(resizedimage, saturation=image_saturation)
         inky_display.show()
         time.sleep(5*60)
 
