@@ -1,3 +1,5 @@
 config.*
 images/
 __pycache__/
+*.png
+fonts/
