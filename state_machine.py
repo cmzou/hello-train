@@ -84,10 +84,9 @@ def main():
                 inky_display.show()
 
             case DisplayMode.CATS:
-                while not exit.is_set():
-                    image_cycler.displays["cat"].set_current_image()
-                    image_cycler.displays["cat"].display_current_image()
-                    exit.wait(sleep_seconds)
+                image_cycler.displays["cat"].set_current_image()
+                image_cycler.displays["cat"].display_current_image()
+                exit.wait(sleep_seconds)
 
             case DisplayMode.SETTINGS:
                 image = Image.new("P", (inky_display.width, inky_display.height), inky_display.BLACK)
