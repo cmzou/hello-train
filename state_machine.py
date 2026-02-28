@@ -72,7 +72,6 @@ def main():
         for event in request.read_edge_events():
             exit.set()
             handle_button(event)
-            exit.clear()
         match current_mode:
             case DisplayMode.CTA:
                 image = Image.new("P", (inky_display.width, inky_display.height), inky_display.BLACK)
@@ -86,7 +85,8 @@ def main():
             case DisplayMode.CATS:
                 image_cycler.displays["cat"].set_current_image()
                 image_cycler.displays["cat"].display_current_image()
-                exit.wait(sleep_seconds)
+                if exit.wait(sleep_seconds):
+                    exit.clear()
 
             case DisplayMode.SETTINGS:
                 image = Image.new("P", (inky_display.width, inky_display.height), inky_display.BLACK)
