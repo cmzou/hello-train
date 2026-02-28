@@ -1,4 +1,5 @@
 import datetime
+import os
 import pandas as pd
 from PIL import Image, ImageDraw, ImageFont
 
@@ -11,6 +12,8 @@ train_to_colors = {
     "Blue": (0, 157, 220),
     "Red": (227, 25, 55)
 }
+
+ui_dir = "./ui"
 
 class Display:
     def __init__(self) -> None:
@@ -158,5 +161,5 @@ if __name__ == "__main__":
         "idFlt": [0, 0, 0, 0]
     })
     image = create_arrivals_background(arrivals_data4, image)
-    save_image(image, "./current_background.png")
+    save_image(image, os.path.join(ui_dir, "./cta_ui.png"))
     image.show()
