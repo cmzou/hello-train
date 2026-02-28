@@ -85,9 +85,3 @@ def main():
 
                 inky_display.set_image(image)
                 inky_display.show()
-
-if __name__ == "__main__":
-    try:
-        main()
-    except Exception as e:
-        print("Error detected:", e)

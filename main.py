@@ -1,14 +1,5 @@
-import time
-import datetime
-import random
-from PIL import Image, ImageDraw
-
-# from inky.auto import auto
-
+import state_machine
 import data_parsers
-import display_helpers
-
-# inky_display = auto(ask_user=True, verbose=True)
 
 station_data = {
     "staNm": ["Racine"],
@@ -19,4 +10,7 @@ station_data = {
 data_parsers.get_and_parse_data(station_data)
 
 if __name__ == "__main__":
-    display_helpers.draw_arrivals(station_data["staData"][0])
+    try:
+        state_machine.main()
+    except Exception as e:
+        print("Error detected:", e)
