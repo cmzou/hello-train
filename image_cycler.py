@@ -21,7 +21,7 @@ def get_current_time() -> str:
 def display_images():
     while True:
         image_path = random.choice(image_paths)
-        image = Image.open("./images/" + image_path)
+        image = Image.open(image_path)
         resizedimage = image.resize(inky_display.resolution)
 
         draw = ImageDraw.Draw(resizedimage)
