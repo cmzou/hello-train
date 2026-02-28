@@ -2,8 +2,8 @@ import datetime
 import pandas as pd
 from PIL import Image, ImageDraw, ImageFont
 
-font_size = 13
-font_size_large = 20
+font_size = 20
+font_size_large = 45
 v_pad = 5 # num of pixels between each arrivals box
 h_pad = 15 # num of pixels between the sides
 
@@ -27,9 +27,9 @@ class Display:
         self.CLEAN = 7
 
 inky_display = Display()
-image = Image.new("P", (inky_display.width, inky_display.height), inky_display.BLACK)
+image = Image.new("RGB", (inky_display.width, inky_display.height), inky_display.BLACK)
 
-arrivals_offset = inky_display.height / 2
+arrivals_offset = v_pad * 2 + font_size
 
 # Fonts
 fnt_small = ImageFont.truetype("./fonts/FreeSans.otf", size=font_size)
@@ -79,9 +79,18 @@ def create_arrivals_background(arrivals_data: pd.DataFrame, image: Image) -> Ima
         )
 
 
-    draw.text((0, 0), f"Last Updated: {get_current_time()}", inky_display.WHITE, font=fnt_small)
+    draw.text((h_pad, v_pad), f"Last Updated: {get_current_time()}", inky_display.WHITE, font=fnt_small)
 
     return image
+
+"""
+Given the coordinates of a box, align text within the box.
+
+Params:
+    v_align: vertical alignment by relative position within the box. 0.5 corresponds to center
+"""
+def add_text_to_box(box_x1: int, box_y1: int, box_x2: int, box_y2: int, v_align=0.5, h_align=0.5, align="left") -> None:
+    pass
 
 """
 Adds coordinates at key parts of the image for debugging purposes.
@@ -137,6 +146,17 @@ if __name__ == "__main__":
         "isDly": [0, 0, 0],
         "idFlt": [0, 0, 0]
     })
-    image = create_arrivals_background(arrivals_data3, image)
+    arrivals_data4 = pd.DataFrame({
+        "staId": [40470, 40470, 40470, 40470],
+        "staNm": ["Racine", "Racine", "Racine", "Racine"],
+        "rt": ["Blue", "Blue", "Blue", "Blue"],
+        "destNm": ["O'Hare", "O'Hare", "Forest Park", "Forest Park"],
+        "tTArr": [7.0, 5.0, 15.0, 20.0],
+        "isApp": [0, 0, 0, 0],
+        "isSch": [0, 0, 0, 0],
+        "isDly": [0, 0, 0, 0],
+        "idFlt": [0, 0, 0, 0]
+    })
+    image = create_arrivals_background(arrivals_data4, image)
     save_image(image, "./current_background.png")
     image.show()
