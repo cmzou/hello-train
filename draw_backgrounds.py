@@ -15,23 +15,6 @@ train_to_colors = {
 
 ui_dir = "./ui"
 
-class Display:
-    def __init__(self) -> None:
-        self.width = 640
-        self.height = 400
-
-        self.BLACK = (0, 0, 0)
-        self.WHITE = (255, 255, 255)
-        self.GREEN = 2
-        self.BLUE = 3
-        self.RED = 4
-        self.YELLOW = 5
-        self.ORANGE = 6
-        self.CLEAN = 7
-
-inky_display = Display()
-image = Image.new("RGB", (inky_display.width, inky_display.height), inky_display.BLACK)
-
 arrivals_offset = v_pad * 2 + font_size
 
 # Fonts
@@ -43,7 +26,7 @@ def get_current_time() -> str:
     current_time = datetime.datetime.today()
     return current_time.strftime("%Y/%m/%d %H:%M:%S")
 
-def create_arrivals_background(arrivals_data: pd.DataFrame, image: Image) -> Image:
+def create_arrivals_background(inky_display, arrivals_data: pd.DataFrame, image: Image) -> Image:
     draw = ImageDraw.Draw(image)
 
     n_arrivals = arrivals_data.shape[0]
@@ -104,7 +87,7 @@ def create_arrivals_background(arrivals_data: pd.DataFrame, image: Image) -> Ima
         )
 
 
-    draw.text((h_pad, v_pad), f"Last Updated: {get_current_time()}", inky_display.WHITE, font=fnt_small)
+    # draw.text((h_pad, v_pad), f"Last Updated: {get_current_time()}", inky_display.WHITE, font=fnt_small)
 
     return image
 
@@ -125,7 +108,7 @@ def align_text(xy: list[tuple], text: str, font: ImageFont.FreeTypeFont, h_align
 """
 Adds coordinates at key parts of the image for debugging purposes.
 """
-def add_grid_coord(image: Image, color=inky_display.WHITE) -> Image:
+def add_grid_coord(image: Image, color) -> Image:
     draw = ImageDraw.Draw(image)
 
     draw.text((0, 50), "(0, 50)", color, font=fnt_small)
@@ -142,18 +125,3 @@ Save the image out. This is because Inky Impressions renders it better as a PNG 
 def save_image(image: Image, out_path: str) -> None:
     image.save(out_path, "PNG")
 
-if __name__ == "__main__":
-    arrivals_data4 = pd.DataFrame({
-        "staId": [40470, 40470, 40470, 40470],
-        "staNm": ["Racine", "Racine", "Racine", "Racine"],
-        "rt": ["Blue", "Blue", "Blue", "Blue"],
-        "destNm": ["O'Hare", "O'Hare", "Forest Park", "Forest Park"],
-        "tTArr": [7.0, 5.0, 15.0, 20.0],
-        "isApp": [0, 0, 0, 0],
-        "isSch": [0, 0, 0, 0],
-        "isDly": [0, 0, 0, 0],
-        "idFlt": [0, 0, 0, 0]
-    })
-    image = create_arrivals_background(arrivals_data4, image)
-    save_image(image, os.path.join(ui_dir, "./cta_ui.png"))
-    image.show()

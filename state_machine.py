@@ -1,6 +1,10 @@
-import time
+import os
+
 from enum import Enum, auto
+import pandas as pd
+
 import image_cycler
+import draw_backgrounds
 
 import gpiod
 import gpiodevice
@@ -14,7 +18,10 @@ from inky.auto import auto as inky_auto
 
 inky_display = inky_auto(ask_user=True, verbose=True)
 
+image = Image.new("RGB", (inky_display.width, inky_display.height), inky_display.BLACK)
+
 sleep_seconds = 60 * 5
+ui_dir = "./ui"
 
 class DisplayMode(Enum):
     CTA = auto()
@@ -74,13 +81,21 @@ def main():
             handle_button(event)
         match current_mode:
             case DisplayMode.CTA:
-                image = Image.new("P", (inky_display.width, inky_display.height), inky_display.BLACK)
-                draw = ImageDraw.Draw(image)
-
-                draw.text((0, 0), f"CTA Mode", inky_display.WHITE)
-
-                inky_display.set_image(image)
-                inky_display.show()
+                arrivals_data4 = pd.DataFrame({
+                    "staId": [40470, 40470, 40470, 40470],
+                    "staNm": ["Racine", "Racine", "Racine", "Racine"],
+                    "rt": ["Blue", "Blue", "Blue", "Blue"],
+                    "destNm": ["O'Hare", "O'Hare", "Forest Park", "Forest Park"],
+                    "tTArr": [7.0, 5.0, 15.0, 20.0],
+                    "isApp": [0, 0, 0, 0],
+                    "isSch": [0, 0, 0, 0],
+                    "isDly": [0, 0, 0, 0],
+                    "idFlt": [0, 0, 0, 0]
+                })
+                image = draw_backgrounds.create_arrivals_background(inky_display, arrivals_data4, image)
+                draw_backgrounds.save_image(image, os.path.join(ui_dir, "./cta_ui.png"))
+                image_cycler.displays["cta"].set_current_image()
+                image_cycler.displays["cta"].display_current_image()
 
             case DisplayMode.CATS:
                 image_cycler.displays["cat"].set_current_image()

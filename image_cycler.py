@@ -10,7 +10,6 @@ from inky.auto import auto
 inky_display = auto(ask_user=True, verbose=True)
 
 image_saturation = 0.75
-sleep_seconds = 60 * 5
 
 displays = {}
 
