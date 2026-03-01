@@ -18,8 +18,6 @@ from inky.auto import auto as inky_auto
 
 inky_display = inky_auto(ask_user=True, verbose=True)
 
-image = Image.new("RGB", (inky_display.width, inky_display.height), inky_display.BLACK)
-
 sleep_seconds = 60 * 5
 ui_dir = "./ui"
 
@@ -92,6 +90,7 @@ def main():
                     "isDly": [0, 0, 0, 0],
                     "idFlt": [0, 0, 0, 0]
                 })
+                image = Image.new("RGB", (inky_display.width, inky_display.height), inky_display.BLACK)
                 image = draw_backgrounds.create_arrivals_background(inky_display, arrivals_data4, image)
                 draw_backgrounds.save_image(image, os.path.join(ui_dir, "./cta_ui.png"))
                 image_cycler.displays["cta"].set_current_image()
