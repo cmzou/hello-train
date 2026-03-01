@@ -69,5 +69,5 @@ def setup():
     cta_display = ImageDisplay("./ui/cta_ui.png")
     cat_display = ImageDisplay("./images")
 
-    displays["CTA"] = cta_display
+    displays["cta"] = cta_display
     displays["cat"] = cat_display
