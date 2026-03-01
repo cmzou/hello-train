@@ -4,7 +4,7 @@ import pandas as pd
 from PIL import Image, ImageDraw, ImageFont
 
 font_size = 20
-font_size_large = 45
+font_size_large = 60
 v_pad = 5 # num of pixels between each arrivals box
 h_pad = 15 # num of pixels between the sides
 
@@ -65,20 +65,42 @@ def create_arrivals_background(arrivals_data: pd.DataFrame, image: Image) -> Ima
             fill=train_to_colors[row["rt"]]
         )
 
-        min_text_width = 25
+        min_text_width = fnt_small.getbbox("min")[2]
+        min_text_height = fnt_small.getbbox("min")[3]
 
         # Write arrivals text
-        draw.text(
+        new_dest_align = align_text(
             (arrival_box_x1 + h_pad, (i_arrival_box_y1 + i_arrival_box_y2) / 2),
+            row["destNm"],
+            fnt_large
+        )
+        new_arr_align = align_text(
+            (arrival_box_x2 - h_pad - min_text_width, (i_arrival_box_y1 + i_arrival_box_y2) / 2),
+            str(round(row["tTArr"])),
+            fnt_large,
+            align="right"
+        )
+
+        draw.text(
+            new_dest_align,
             row["destNm"],
             inky_display.WHITE,
             font=fnt_large
         )
         draw.text(
-            (arrival_box_x2 - h_pad - min_text_width, (i_arrival_box_y1 + i_arrival_box_y2) / 2),
+            new_arr_align,
             str(round(row["tTArr"])),
             inky_display.WHITE,
             font=fnt_large
+        )
+        draw.text(
+            (
+                new_arr_align[0] + fnt_large.getbbox(str(round(row["tTArr"])))[2] + (h_pad / 2),
+                new_arr_align[1] + fnt_large.getbbox(str(round(row["tTArr"])))[3] - min_text_height
+            ),
+            "min",
+            inky_display.WHITE,
+            font=fnt_small
         )
 
 
@@ -103,18 +125,14 @@ Given desired coordinates and alignment, return aligned coordinates
 """
 def align_text(xy: list[tuple], text: str, font: ImageFont.FreeTypeFont, h_align: float=0.5, v_align: float=0.5, align: str="left") -> list[tuple]:
     x, y = xy
-    box_left, box_top, box_right, box_bottom = font.getbbox(text)
-
-    text_height = box_bottom - box_top
-
-    print(text_height)
+    _, _, text_length, text_height = font.getbbox(text)
 
     y_offset = text_height * v_align
 
     if align == "left":
         return (x, y - y_offset)
     if align == "right":
-        return (x - box_right, y - y_offset)
+        return (x - text_length, y - y_offset)
 
 """
 Adds coordinates at key parts of the image for debugging purposes.
@@ -122,20 +140,11 @@ Adds coordinates at key parts of the image for debugging purposes.
 def add_grid_coord(image: Image, color=inky_display.WHITE) -> Image:
     draw = ImageDraw.Draw(image)
 
-    # draw.text((0, 50), "(0, 50)", color, font=fnt_small)
-    # draw.text((50, 50), "(50, 50)", color, font=fnt_small)
-    # draw.text((0, 200), "(0, 200)", color, font=fnt_small)
-    # draw.text((0, 250), "(0, 250)", color, font=fnt_small)
-    # draw.text((0, 300), "(0, 300)", color, font=fnt_small)
-
-    draw.line(((0, 50), (inky_display.width, 50)))
-    draw.line(((50, 0), (50, inky_display.height)))
-
-    new_align = align_text((50,50), "Hello", fnt_large, align="right")
-    print(new_align)
-
-    # draw.text((50,50), "Hello", color="red", font=fnt_small)
-    draw.text(new_align, "Hello", color="blue", font=fnt_large)
+    draw.text((0, 50), "(0, 50)", color, font=fnt_small)
+    draw.text((50, 50), "(50, 50)", color, font=fnt_small)
+    draw.text((0, 200), "(0, 200)", color, font=fnt_small)
+    draw.text((0, 250), "(0, 250)", color, font=fnt_small)
+    draw.text((0, 300), "(0, 300)", color, font=fnt_small)
 
     return image
 
@@ -146,39 +155,6 @@ def save_image(image: Image, out_path: str) -> None:
     image.save(out_path, "PNG")
 
 if __name__ == "__main__":
-    arrivals_data1 = pd.DataFrame({
-        "staId": [40470],
-        "staNm": ["Racine"],
-        "rt": ["Blue"],
-        "destNm": ["O'Hare"],
-        "tTArr": [7.0],
-        "isApp": [0],
-        "isSch": [0],
-        "isDly": [0],
-        "idFlt": [0]
-    })
-    arrivals_data2 = pd.DataFrame({
-        "staId": [40470, 40470],
-        "staNm": ["Racine", "Racine"],
-        "rt": ["Blue", "Red"],
-        "destNm": ["O'Hare", "O'Hare"],
-        "tTArr": [7.0, 5.0],
-        "isApp": [0, 0],
-        "isSch": [0, 0],
-        "isDly": [0, 0],
-        "idFlt": [0, 0]
-    })
-    arrivals_data3 = pd.DataFrame({
-        "staId": [40470, 40470, 40470],
-        "staNm": ["Racine", "Racine", "Racine"],
-        "rt": ["Blue", "Blue", "Blue"],
-        "destNm": ["O'Hare", "O'Hare", "Forest Park"],
-        "tTArr": [7.0, 5.0, 15.0],
-        "isApp": [0, 0, 0],
-        "isSch": [0, 0, 0],
-        "isDly": [0, 0, 0],
-        "idFlt": [0, 0, 0]
-    })
     arrivals_data4 = pd.DataFrame({
         "staId": [40470, 40470, 40470, 40470],
         "staNm": ["Racine", "Racine", "Racine", "Racine"],
@@ -190,7 +166,6 @@ if __name__ == "__main__":
         "isDly": [0, 0, 0, 0],
         "idFlt": [0, 0, 0, 0]
     })
-    # image = create_arrivals_background(arrivals_data4, image)
-    image = add_grid_coord(image)
+    image = create_arrivals_background(arrivals_data4, image)
     save_image(image, os.path.join(ui_dir, "./cta_ui.png"))
     image.show()
