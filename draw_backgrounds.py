@@ -109,18 +109,6 @@ def create_arrivals_background(arrivals_data: pd.DataFrame, image: Image) -> Ima
     return image
 
 """
-Given the coordinates of a box, align text within the box.
-
-Params:
-    xy: box coordinates of the form [(x0, y0), (x1, y1)]
-    v_align: vertical alignment by relative position within the box. 0.5 corresponds to center
-    v_align: horizontal alignment by relative position within the box. 0.5 corresponds to center
-"""
-def add_text_to_box(xy: list[tuple], v_align: float=0.5, h_align: float=0.5, align: str="left") -> None:
-    pass
-
-
-"""
 Given desired coordinates and alignment, return aligned coordinates
 """
 def align_text(xy: list[tuple], text: str, font: ImageFont.FreeTypeFont, h_align: float=0.5, v_align: float=0.5, align: str="left") -> list[tuple]:
