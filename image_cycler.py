@@ -7,8 +7,6 @@ from PIL import Image, ImageDraw
 
 from inky.auto import auto
 
-inky_display = auto(ask_user=True, verbose=True)
-
 image_saturation = 0.75
 
 displays = {}
@@ -55,12 +53,13 @@ class ImageDisplay:
     """
     Display the current image
     """
-    def display_current_image(self):
+    def display_current_image(self, inky_display, last_update_xy=(0, 0), last_update_color=None, last_update_fnt=None):
         image = Image.open(self.current_image)
         resizedimage = image.resize(inky_display.resolution)
 
         draw = ImageDraw.Draw(resizedimage)
-        draw.text((0, 0), f"Last Updated: {get_current_time()}", inky_display.BLACK)
+
+        draw.text(last_update_xy, f"Last Updated: {get_current_time()}", fill=last_update_color, font=last_update_fnt)
 
         inky_display.set_image(resizedimage, saturation=image_saturation)
         inky_display.show()

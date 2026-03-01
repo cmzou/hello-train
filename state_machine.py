@@ -79,7 +79,7 @@ def main():
             handle_button(event)
         match current_mode:
             case DisplayMode.CTA:
-                arrivals_data4 = pd.DataFrame({
+                arrivals_data = pd.DataFrame({
                     "staId": [40470, 40470, 40470, 40470],
                     "staNm": ["Racine", "Racine", "Racine", "Racine"],
                     "rt": ["Blue", "Blue", "Blue", "Blue"],
@@ -91,10 +91,10 @@ def main():
                     "idFlt": [0, 0, 0, 0]
                 })
                 image = Image.new("RGB", (inky_display.width, inky_display.height), inky_display.BLACK)
-                image = draw_backgrounds.create_arrivals_background(inky_display, arrivals_data4, image)
+                image = draw_backgrounds.create_arrivals_background(inky_display, arrivals_data, image)
                 draw_backgrounds.save_image(image, os.path.join(ui_dir, "./cta_ui.png"))
                 image_cycler.displays["cta"].set_current_image()
-                image_cycler.displays["cta"].display_current_image()
+                image_cycler.displays["cta"].display_current_image(last_update_color=inky_display.WHITE, last_update_fnt=draw_backgrounds.fnt_small)
 
             case DisplayMode.CATS:
                 image_cycler.displays["cat"].set_current_image()
