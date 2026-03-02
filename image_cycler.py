@@ -5,8 +5,6 @@ import os
 
 from PIL import Image, ImageDraw
 
-from inky.auto import auto
-
 image_saturation = 0.75
 
 displays = {}
