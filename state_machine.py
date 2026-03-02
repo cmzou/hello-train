@@ -94,11 +94,11 @@ def main():
                 image = draw_backgrounds.create_arrivals_background(inky_display, arrivals_data, image)
                 draw_backgrounds.save_image(image, os.path.join(ui_dir, "./cta_ui.png"))
                 image_cycler.displays["cta"].set_current_image()
-                image_cycler.displays["cta"].display_current_image(last_update_color=inky_display.WHITE, last_update_fnt=draw_backgrounds.fnt_small)
+                image_cycler.displays["cta"].display_current_image(inky_display, last_update_color=inky_display.WHITE, last_update_fnt=draw_backgrounds.fnt_small)
 
             case DisplayMode.CATS:
                 image_cycler.displays["cat"].set_current_image()
-                image_cycler.displays["cat"].display_current_image()
+                image_cycler.displays["cat"].display_current_image(inky_display)
                 if exit.wait(sleep_seconds):
                     exit.clear()
 
