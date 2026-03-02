@@ -13,6 +13,9 @@ train_to_colors = {
     "Red": (227, 25, 55)
 }
 
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+
 ui_dir = "./ui"
 
 arrivals_offset = v_pad * 2 + font_size
@@ -67,13 +70,13 @@ def create_arrivals_background(inky_display, arrivals_data: pd.DataFrame, image:
         draw.text(
             new_dest_align,
             row["destNm"],
-            inky_display.WHITE,
+            WHITE,
             font=fnt_large
         )
         draw.text(
             new_arr_align,
             str(round(row["tTArr"])),
-            inky_display.WHITE,
+            WHITE,
             font=fnt_large
         )
         draw.text(
@@ -82,7 +85,7 @@ def create_arrivals_background(inky_display, arrivals_data: pd.DataFrame, image:
                 new_arr_align[1] + fnt_large.getbbox(str(round(row["tTArr"])))[3] - min_text_height
             ),
             "min",
-            inky_display.WHITE,
+            WHITE,
             font=fnt_small
         )
 
