@@ -3,7 +3,7 @@ import pandas as pd
 import requests
 import settings
 
-max_results_returned = 10
+max_results_returned = 4
 max_retries = 3
 
 def call_get_train_arrivals(map_id: int) -> dict:

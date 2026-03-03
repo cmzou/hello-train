@@ -5,6 +5,7 @@ import pandas as pd
 
 import image_cycler
 import draw_backgrounds
+import data_parsers
 
 import gpiod
 import gpiodevice
@@ -79,17 +80,7 @@ def main():
             handle_button(event)
         match current_mode:
             case DisplayMode.CTA:
-                arrivals_data = pd.DataFrame({
-                    "staId": [40470, 40470, 40470, 40470],
-                    "staNm": ["Racine", "Racine", "Racine", "Racine"],
-                    "rt": ["Blue", "Blue", "Blue", "Blue"],
-                    "destNm": ["O'Hare", "O'Hare", "Forest Park", "Forest Park"],
-                    "tTArr": [7.0, 5.0, 15.0, 20.0],
-                    "isApp": [0, 0, 0, 0],
-                    "isSch": [0, 0, 0, 0],
-                    "isDly": [0, 0, 0, 0],
-                    "idFlt": [0, 0, 0, 0]
-                })
+                arrivals_data = data_parsers.get_and_parse_data(data_parsers.route_to_ids["Racine"]["id"], data_parsers.route_to_ids["Racine"]["transport_mode"])
                 image = Image.new("RGB", (inky_display.width, inky_display.height), inky_display.BLACK)
                 image = draw_backgrounds.create_arrivals_background(inky_display, arrivals_data, image)
                 draw_backgrounds.save_image(image, os.path.join(ui_dir, "./cta_ui.png"))

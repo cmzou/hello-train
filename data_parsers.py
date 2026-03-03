@@ -3,6 +3,28 @@ import datetime
 
 import api_helpers
 
+route_to_ids = {
+    "Racine": {
+        "transport_mode": "train",
+        "id": 40470
+    },
+    "9": {
+        "transport_mode": "bus",
+        "id": 51
+    }
+}
+
+transport_mode_to_id_name = {
+    "train": "staId",
+    "bus": "stpid"
+}
+
+route_to_colname = {
+    "train": "staNm",
+    "bus": "rtdd"
+}
+
+
 def parse_data(arrivals_data: pd.DataFrame) -> None:
     arrivals_data["arrT"] = pd.to_datetime(arrivals_data["arrT"])
 
@@ -17,13 +39,17 @@ def calc_time_remaining(arrivals_data: pd.DataFrame) -> None:
     arrivals_data["tTArr"] = arrivals_data["tTArr"].round()
 
 """
-Given a dictionary of station information to get,
-add new data to the dictionary
+Given a route ID and type, get the data
 """
-def get_and_parse_data(station_data: dict) -> None:
-    for i in range(len(station_data["staNm"])):
-        arrivals_data = api_helpers.get_train_arrivals(station_data["staId"][i])
-        parse_data(arrivals_data)
-        calc_time_remaining(arrivals_data)
+def get_and_parse_data(route_id: str, transport_mode: str) -> None:
+    if transport_mode == "train":
+        arrivals_data = api_helpers.get_train_arrivals(route_id)
+    elif transport_mode == "bus":
+        arrivals_data = api_helpers.get_bus_arrivals(route_id)
+    else:
+        raise ValueError(f"Invalid transport_mode give: {transport_mode}")
 
-        station_data["staData"].append(arrivals_data)
+    parse_data(arrivals_data)
+    calc_time_remaining(arrivals_data)
+
+    return arrivals_data
