@@ -50,11 +50,7 @@ def switch_to_cta():
 def switch_to_cats():
     global current_mode
     current_mode = DisplayMode.CATS
-
-def switch_to_settings():
-    global current_mode
-    current_mode = DisplayMode.SETTINGS
-
+    
 def handle_button(event):
     index = OFFSETS.index(event.line_offset)
     gpio_number = BUTTONS[index]
@@ -65,8 +61,6 @@ def handle_button(event):
         switch_to_cta()
     if label == "B":
         switch_to_cats()
-    if label == "C":
-        switch_to_settings()
 
 def setup():
     image_cycler.setup()
@@ -86,6 +80,8 @@ def main():
                 draw_backgrounds.save_image(image, os.path.join(ui_dir, "./cta_ui.png"))
                 image_cycler.displays["cta"].set_current_image()
                 image_cycler.displays["cta"].display_current_image(inky_display, last_update_color=draw_backgrounds.WHITE, last_update_fnt=draw_backgrounds.fnt_small)
+                if exit.wait(sleep_seconds):
+                    exit.clear()
 
             case DisplayMode.CATS:
                 image_cycler.displays["cat"].set_current_image()

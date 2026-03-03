@@ -3,7 +3,7 @@ import pandas as pd
 from PIL import Image, ImageDraw, ImageFont
 
 font_size = 20
-font_size_large = 60
+font_size_large = 70
 v_pad = 5 # num of pixels between each arrivals box
 h_pad = 15 # num of pixels between the sides
 
