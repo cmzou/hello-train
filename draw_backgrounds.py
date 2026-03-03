@@ -57,7 +57,7 @@ def create_arrivals_background(inky_display, arrivals_data: pd.DataFrame, image:
         )
         new_arr_align = align_text(
             (arrival_box_x2 - h_pad - min_text_width, (i_arrival_box_y1 + i_arrival_box_y2) / 2),
-            str(round(row["tTArr"])),
+            row["tTArr"],
             fnt_large,
             align="right"
         )
@@ -76,8 +76,8 @@ def create_arrivals_background(inky_display, arrivals_data: pd.DataFrame, image:
         )
         draw.text(
             (
-                new_arr_align[0] + fnt_large.getbbox(str(round(row["tTArr"])))[2] + (h_pad / 2),
-                new_arr_align[1] + fnt_large.getbbox(str(round(row["tTArr"])))[3] - min_text_height
+                new_arr_align[0] + fnt_large.getbbox(row["tTArr"])[2] + (h_pad / 2),
+                new_arr_align[1] + fnt_large.getbbox(row["tTArr"])[3] - min_text_height
             ),
             "min",
             WHITE,

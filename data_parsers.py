@@ -41,7 +41,7 @@ def calc_time_remaining(arrivals_data: pd.DataFrame, transport_mode: str) -> Non
         arrivals_data["tTArr"] = arrivals_data["arrT"] - datetime.datetime.now()
         arrivals_data["tTArr"] = arrivals_data["tTArr"].apply(lambda x: x.total_seconds())
         arrivals_data["tTArr"] = arrivals_data["tTArr"] / 60
-        arrivals_data["tTArr"] = arrivals_data["tTArr"].round()
+        arrivals_data["tTArr"] = arrivals_data["tTArr"].round().astype(int)
         arrivals_data["tTArr"] = arrivals_data["tTArr"].astype(str)
         arrivals_data.loc[arrivals_data["isApp"] == 1, 'tTArr'] = "DUE"
     elif transport_mode == "bus":
