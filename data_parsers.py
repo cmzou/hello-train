@@ -28,7 +28,7 @@ route_to_colname = {
 def parse_data(arrivals_data: pd.DataFrame, transport_mode) -> None:
     if transport_mode == "train":
         arrivals_data["arrT"] = pd.to_datetime(arrivals_data["arrT"])
-        arrivals_data["nmArr"] = arrivals_data["staNm"]
+        arrivals_data["nmArr"] = arrivals_data["destNm"]
     elif transport_mode == "bus":
         arrivals_data["nmArr"] = arrivals_data["rtdir"] + " to " + arrivals_data["des"]
 
