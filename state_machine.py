@@ -81,11 +81,11 @@ def main():
         match current_mode:
             case DisplayMode.CTA:
                 arrivals_data = data_parsers.get_and_parse_data(data_parsers.route_to_ids["Racine"]["id"], data_parsers.route_to_ids["Racine"]["transport_mode"])
-                image = Image.new("RGB", (inky_display.width, inky_display.height), inky_display.BLACK)
+                image = Image.new("RGB", (inky_display.width, inky_display.height), draw_backgrounds.BLACK)
                 image = draw_backgrounds.create_arrivals_background(inky_display, arrivals_data, image)
                 draw_backgrounds.save_image(image, os.path.join(ui_dir, "./cta_ui.png"))
                 image_cycler.displays["cta"].set_current_image()
-                image_cycler.displays["cta"].display_current_image(inky_display, last_update_color=inky_display.WHITE, last_update_fnt=draw_backgrounds.fnt_small)
+                image_cycler.displays["cta"].display_current_image(inky_display, last_update_color=draw_backgrounds.WHITE, last_update_fnt=draw_backgrounds.fnt_small)
 
             case DisplayMode.CATS:
                 image_cycler.displays["cat"].set_current_image()
