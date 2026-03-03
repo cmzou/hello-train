@@ -84,9 +84,6 @@ def create_arrivals_background(inky_display, arrivals_data: pd.DataFrame, image:
             font=fnt_small
         )
 
-
-    # draw.text((h_pad, v_pad), f"Last Updated: {get_current_time()}", inky_display.WHITE, font=fnt_small)
-
     return image
 
 """

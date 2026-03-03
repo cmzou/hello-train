@@ -1,7 +1,7 @@
 import os
+import logging
 
 from enum import Enum, auto
-import pandas as pd
 
 import image_cycler
 import draw_backgrounds
@@ -13,9 +13,11 @@ from gpiod.line import Bias, Direction, Edge
 
 from threading import Event
 
-from PIL import Image, ImageDraw
+from PIL import Image
 
 from inky.auto import auto as inky_auto
+
+logger = logging.getLogger(__name__)
 
 inky_display = inky_auto(ask_user=True, verbose=True)
 
@@ -55,7 +57,7 @@ def handle_button(event):
     index = OFFSETS.index(event.line_offset)
     gpio_number = BUTTONS[index]
     label = LABELS[index]
-    print(f"Button press detected on GPIO #{gpio_number} label: {label}")
+    logger.INFO(f"Button press detected on GPIO #{gpio_number} label: {label}")
 
     if label == "A":
         switch_to_cta()
