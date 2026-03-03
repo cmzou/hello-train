@@ -69,13 +69,13 @@ def create_arrivals_background(inky_display, arrivals_data: pd.DataFrame, image:
         draw.text(
             new_dest_align,
             row["destNm"],
-            WHITE,
+            inky_display.WHITE,
             font=fnt_large
         )
         draw.text(
             new_arr_align,
             str(round(row["tTArr"])),
-            WHITE,
+            inky_display.WHITE,
             font=fnt_large
         )
         draw.text(
@@ -84,7 +84,7 @@ def create_arrivals_background(inky_display, arrivals_data: pd.DataFrame, image:
                 new_arr_align[1] + fnt_large.getbbox(str(round(row["tTArr"])))[3] - min_text_height
             ),
             "min",
-            WHITE,
+            inky_display.WHITE,
             font=fnt_small
         )
 
