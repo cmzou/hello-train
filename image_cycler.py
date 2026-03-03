@@ -10,7 +10,7 @@ displays = {}
 
 def get_current_time() -> str:
     current_time = datetime.datetime.today()
-    return current_time.strftime("%Y/%m/%d %H:%M:%S")
+    return current_time.strftime("%Y/%m/%d %-I:%M:%S %p")
 
 class ImageDisplay:
     def __init__(self, images: str | list[str]) -> None:
@@ -64,6 +64,8 @@ class ImageDisplay:
 def setup():
     cta_display = ImageDisplay("./ui/cta_ui.png")
     cat_display = ImageDisplay("./images")
+    error_display = ImageDisplay("./images/special/error.png")
 
     displays["cta"] = cta_display
     displays["cat"] = cat_display
+    displays["error"] = error_display
