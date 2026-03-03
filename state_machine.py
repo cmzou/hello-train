@@ -69,6 +69,9 @@ def main():
     setup()
 
     while True:
+        for event in request.read_edge_events():
+            exit.set()
+            handle_button(event)
         match current_mode:
             case DisplayMode.CTA:
                 arrivals_data = data_parsers.get_and_parse_data(data_parsers.route_to_ids["Racine"]["id"], data_parsers.route_to_ids["Racine"]["transport_mode"])
@@ -85,6 +88,3 @@ def main():
                 image_cycler.displays["cat"].display_current_image(inky_display)
                 if exit.wait(sleep_seconds):
                     exit.clear()
-        for event in request.read_edge_events():
-            exit.set()
-            handle_button(event)

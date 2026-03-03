@@ -52,7 +52,7 @@ def create_arrivals_background(inky_display, arrivals_data: pd.DataFrame, image:
         # Write arrivals text
         new_dest_align = align_text(
             (arrival_box_x1 + h_pad, (i_arrival_box_y1 + i_arrival_box_y2) / 2),
-            row["destNm"],
+            row["nmArr"],
             fnt_large
         )
         new_arr_align = align_text(
@@ -64,13 +64,13 @@ def create_arrivals_background(inky_display, arrivals_data: pd.DataFrame, image:
 
         draw.text(
             new_dest_align,
-            row["destNm"],
+            row["nmArr"],
             WHITE,
             font=fnt_large
         )
         draw.text(
             new_arr_align,
-            str(round(row["tTArr"])),
+            row["tTArr"],
             WHITE,
             font=fnt_large
         )
