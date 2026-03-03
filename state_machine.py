@@ -57,7 +57,7 @@ def handle_button(event):
     index = OFFSETS.index(event.line_offset)
     gpio_number = BUTTONS[index]
     label = LABELS[index]
-    logger.INFO(f"Button press detected on GPIO #{gpio_number} label: {label}")
+    logger.info(f"Button press detected on GPIO #{gpio_number} label: {label}")
 
     if label == "A":
         switch_to_cta()
