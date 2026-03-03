@@ -24,10 +24,6 @@ fnt_small = ImageFont.truetype("./fonts/FreeSans.otf", size=font_size)
 fnt_large = ImageFont.truetype("./fonts/FreeSansBold.otf", size=font_size_large)
 
 # Functions
-def get_current_time() -> str:
-    current_time = datetime.datetime.today()
-    return current_time.strftime("%Y/%m/%d %H:%M:%S")
-
 def create_arrivals_background(inky_display, arrivals_data: pd.DataFrame, image: Image) -> Image:
     draw = ImageDraw.Draw(image)
 
