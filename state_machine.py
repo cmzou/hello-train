@@ -11,7 +11,7 @@ import gpiod
 import gpiodevice
 from gpiod.line import Bias, Direction, Edge
 
-from threading import Event
+from threading import Thread, Event
 
 from PIL import Image
 
@@ -64,6 +64,14 @@ def handle_button(event):
     if label == "B":
         switch_to_cats()
 
+def button_thread():
+    while True:
+        for event in request.read_edge_events():
+            handle_button(event)
+            exit.set()
+
+Thread(target=button_thread, daemon=True).start()
+
 def setup():
     image_cycler.setup()
 
@@ -71,22 +79,19 @@ def main():
     setup()
 
     while True:
-        for event in request.read_edge_events():
-            exit.set()
-            handle_button(event)
         match current_mode:
             case DisplayMode.CTA:
+                exit.clear()
                 arrivals_data = data_parsers.get_and_parse_data(data_parsers.route_to_ids["Racine"]["id"], data_parsers.route_to_ids["Racine"]["transport_mode"])
                 image = Image.new("RGB", (inky_display.width, inky_display.height), draw_backgrounds.BLACK)
                 image = draw_backgrounds.create_arrivals_background(inky_display, arrivals_data, image)
                 draw_backgrounds.save_image(image, os.path.join(ui_dir, "./cta_ui.png"))
                 image_cycler.displays["cta"].set_current_image()
                 image_cycler.displays["cta"].display_current_image(inky_display, last_update_color=draw_backgrounds.WHITE, last_update_fnt=draw_backgrounds.fnt_small)
-                if exit.wait(sleep_seconds):
-                    exit.clear()
+                exit.wait(sleep_seconds)
 
             case DisplayMode.CATS:
+                exit.clear()
                 image_cycler.displays["cat"].set_current_image()
                 image_cycler.displays["cat"].display_current_image(inky_display)
-                if exit.wait(sleep_seconds):
-                    exit.clear()
+                exit.wait(sleep_seconds)
