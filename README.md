@@ -5,11 +5,6 @@
 * A: toggle bus/train
 * B: refresh
 * C: switch between CTA/cats mode
-* D: settings
-    * A: go up
-    * B: select
-    * C: go down
-    * D: exit out of settings
 
 ## Settings
 

@@ -92,12 +92,3 @@ def main():
                 image_cycler.displays["cat"].display_current_image(inky_display)
                 if exit.wait(sleep_seconds):
                     exit.clear()
-
-            case DisplayMode.SETTINGS:
-                image = Image.new("P", (inky_display.width, inky_display.height), inky_display.BLACK)
-                draw = ImageDraw.Draw(image)
-
-                draw.text((0, 0), f"Settings Mode", inky_display.WHITE)
-
-                inky_display.set_image(image)
-                inky_display.show()
