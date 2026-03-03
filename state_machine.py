@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 inky_display = inky_auto(ask_user=True, verbose=True)
 
 sleep_seconds = 60 * 5
+refresh_time = "9:00 PM" # what time every day to refresh at
 ui_dir = "./ui"
 
 class DisplayMode(Enum):
@@ -93,5 +94,6 @@ def main():
             case DisplayMode.CATS:
                 exit.clear()
                 image_cycler.displays["cat"].set_current_image()
-                image_cycler.displays["cat"].display_current_image(inky_display)
-                exit.wait(sleep_seconds)
+                image_cycler.displays["cat"].display_current_image(inky_display, last_update_color=draw_backgrounds.BLACK)
+                seconds_until_refresh = image_cycler.calc_time_until_refresh(refresh_time)
+                exit.wait(seconds_until_refresh)

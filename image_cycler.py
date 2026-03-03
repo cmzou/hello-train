@@ -9,8 +9,26 @@ image_saturation = 0.75
 displays = {}
 
 def get_current_time() -> str:
-    current_time = datetime.datetime.today()
-    return current_time.strftime("%Y/%m/%d %-I:%M:%S %p")
+    current_datetime = datetime.datetime.today()
+    return current_datetime.strftime("%Y/%m/%d %-I:%M:%S %p")
+
+"""
+Given a refresh time of the form H:MM P, calculate the number of seconds until the next refresh.
+"""
+def calc_time_until_refresh(refresh_time: str) -> int:
+    current_datetime = datetime.datetime.today()
+    current_date = current_datetime.strftime("%Y/%m/%d")
+    refresh_datetime = datetime.datetime.strptime(current_date + " " + refresh_time, "%Y/%m/%d %I:%M %p")
+
+    if refresh_datetime > current_datetime: # hasn't passed refresh time
+        time_until_refresh = refresh_datetime - current_datetime
+    else: # passed refresh time, calculate the next available one
+        next_datetime = current_datetime + datetime.timedelta(days=1)
+        next_datetime = next_datetime.replace(hour=refresh_datetime.hour, minute=refresh_datetime.minute)
+
+        time_until_refresh = next_datetime - current_datetime
+
+    return time_until_refresh.total_seconds()
 
 class ImageDisplay:
     def __init__(self, images: str | list[str]) -> None:
