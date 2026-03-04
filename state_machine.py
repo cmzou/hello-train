@@ -6,6 +6,7 @@ from enum import Enum, auto
 import image_cycler
 import draw_backgrounds
 import data_parsers
+import mode_settings
 
 import gpiod
 import gpiodevice
@@ -20,10 +21,6 @@ from inky.auto import auto as inky_auto
 logger = logging.getLogger(__name__)
 
 inky_display = inky_auto(ask_user=True, verbose=True)
-
-sleep_seconds = 60 * 5
-refresh_time = "9:00 PM" # what time every day to refresh at
-ui_dir = "./ui"
 
 class DisplayMode(Enum):
     CTA = auto()
@@ -86,14 +83,17 @@ def main():
                 arrivals_data = data_parsers.get_and_parse_data(data_parsers.route_to_ids["Racine"]["id"], data_parsers.route_to_ids["Racine"]["transport_mode"])
                 image = Image.new("RGB", (inky_display.width, inky_display.height), draw_backgrounds.BLACK)
                 image = draw_backgrounds.create_arrivals_background(inky_display, arrivals_data, image)
-                draw_backgrounds.save_image(image, os.path.join(ui_dir, "./cta_ui.png"))
+                draw_backgrounds.save_image(image, os.path.join(draw_backgrounds.ui_dir, "./cta_ui.png"))
                 image_cycler.displays["cta"].set_current_image()
                 image_cycler.displays["cta"].display_current_image(inky_display, last_update_color=draw_backgrounds.WHITE, last_update_fnt=draw_backgrounds.fnt_small)
-                exit.wait(sleep_seconds)
+                exit.wait(mode_settings.cta_refresh_seconds)
 
             case DisplayMode.CATS:
                 exit.clear()
                 image_cycler.displays["cat"].set_current_image()
                 image_cycler.displays["cat"].display_current_image(inky_display, last_update_color=draw_backgrounds.BLACK)
-                seconds_until_refresh = image_cycler.calc_time_until_refresh(refresh_time)
+                if mode_settings.enable_scheduled_shuffle:
+                    seconds_until_refresh = image_cycler.calc_time_until_refresh(mode_settings.scheduled_refresh_time)
+                else:
+                    seconds_until_refresh = mode_settings.shuffle_seconds
                 exit.wait(seconds_until_refresh)

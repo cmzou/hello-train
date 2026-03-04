@@ -8,7 +8,7 @@ route_to_ids = {
         "transport_mode": "train",
         "id": 40470
     },
-    "9": {
+    "Ashland & Van Buren": {
         "transport_mode": "bus",
         "id": 51
     }

@@ -2,9 +2,12 @@
 
 ## Usage
 
-* A: toggle bus/train
-* B: refresh
-* C: switch between CTA/cats mode
+* A: CTA mode
+* B: Cats mode
+* C: News mode
+* D: Mode specific operations
+
+Pushing the button corresponding to the current mode will refresh the mode.
 
 ## Settings
 
