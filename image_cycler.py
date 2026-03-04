@@ -4,6 +4,8 @@ import os
 
 from PIL import Image, ImageDraw
 
+import mode_settings
+
 image_saturation = 0.75
 
 displays = {}
@@ -81,7 +83,7 @@ class ImageDisplay:
 
 def setup():
     cta_display = ImageDisplay("./ui/cta_ui.png")
-    cat_display = ImageDisplay("./images")
+    cat_display = ImageDisplay(mode_settings.image_dir)
     error_display = ImageDisplay("./images/special/error.png")
 
     displays["cta"] = cta_display

@@ -2,7 +2,6 @@
 Settings for various modes, displays, etc.
 """
 
-
 #### CTA mode ####
 
 display_train_stations = ["Racine"] # which train stations to display
@@ -18,4 +17,3 @@ enable_shuffle = True # whether to shuffle images on display
 enable_scheduled_shuffle = True
 scheduled_refresh_time = "9:00 PM" # when to cycle image each day; ignored if enable_scheduled_shuffle is False
 shuffle_seconds = 60 * 5 # interval between image cycles; ignored if enable_scheduled_shuffle is True
-
