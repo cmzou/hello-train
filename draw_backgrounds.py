@@ -8,7 +8,8 @@ h_pad = 15 # num of pixels between the sides
 
 train_to_colors = {
     "Blue": (0, 157, 220),
-    "Red": (227, 25, 55)
+    "Red": (227, 25, 55),
+    "NA": (86, 90, 92)
 }
 
 WHITE = (255, 255, 255)
@@ -37,12 +38,17 @@ def create_arrivals_background(inky_display, arrivals_data: pd.DataFrame, image:
         i_arrival_box_y1 = arrivals_offset + ((arrival_box_height + v_pad) * i)
         i_arrival_box_y2 = i_arrival_box_y1 + arrival_box_height
 
+        if row["rt"] in train_to_colors:
+            fill_color = train_to_colors[row["rt"]]
+        else:
+            fill_color = train_to_colors["NA"]
+
         draw.rectangle(
             (
                 arrival_box_x1, i_arrival_box_y1, 
                 arrival_box_x2, i_arrival_box_y2
             ), 
-            fill=train_to_colors[row["rt"]]
+            fill=fill_color
         )
 
         min_text_width = fnt_small.getbbox("min")[2]
