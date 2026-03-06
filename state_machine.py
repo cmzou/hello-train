@@ -12,7 +12,7 @@ import gpiod
 import gpiodevice
 from gpiod.line import Bias, Direction, Edge
 
-from threading import Thread, Event
+from threading import Thread, Event, Timer
 
 from PIL import Image
 
@@ -46,10 +46,12 @@ exit = Event()
 def switch_to_cta():
     global current_mode
     current_mode = DisplayMode.CTA
+    exit.set()
 
 def switch_to_cats():
     global current_mode
     current_mode = DisplayMode.CATS
+    exit.set()
 
 def handle_button(event):
     index = OFFSETS.index(event.line_offset)
@@ -66,12 +68,30 @@ def button_thread():
     while True:
         for event in request.read_edge_events():
             handle_button(event)
-            exit.set()
+
+def switch_based_on_current_mode():
+    if current_mode == DisplayMode.CTA:
+        switch_to_cats()
+    else:
+        switch_to_cta()
+
+def scheduler():
+    interval_begin = mode_settings.scheduled_intervals[0][0]
+    interval_end = mode_settings.scheduled_intervals[0][1]
+
+    seconds_until_begin = image_cycler.calc_time_until_refresh(interval_begin)
+    seconds_until_end = image_cycler.calc_time_until_refresh(interval_end)
+
+    seconds_until_refresh = min(seconds_until_begin, seconds_until_end)
+
+    Timer(seconds_until_refresh, switch_based_on_current_mode).start()
 
 Thread(target=button_thread, daemon=True).start()
 
 def setup():
     image_cycler.setup()
+
+    Thread(target=scheduler, daemon=True).start() #TODO - needs to reset every day
 
 def main():
     setup()
