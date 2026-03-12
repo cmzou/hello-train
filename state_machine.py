@@ -1,4 +1,5 @@
 import os
+import time
 import logging
 
 from enum import Enum, auto
@@ -76,22 +77,25 @@ def switch_based_on_current_mode():
         switch_to_cta()
 
 def scheduler():
-    interval_begin = mode_settings.scheduled_intervals[0][0]
-    interval_end = mode_settings.scheduled_intervals[0][1]
+    while True:
+        interval_begin = mode_settings.scheduled_intervals[0][0]
+        interval_end = mode_settings.scheduled_intervals[0][1]
 
-    seconds_until_begin = image_cycler.calc_time_until_refresh(interval_begin)
-    seconds_until_end = image_cycler.calc_time_until_refresh(interval_end)
+        seconds_until_begin = image_cycler.calc_time_until_refresh(interval_begin)
+        seconds_until_end = image_cycler.calc_time_until_refresh(interval_end)
 
-    seconds_until_refresh = min(seconds_until_begin, seconds_until_end)
+        seconds_until_refresh = min(seconds_until_begin, seconds_until_end)
 
-    Timer(seconds_until_refresh, switch_based_on_current_mode).start()
+        time.sleep(seconds_until_refresh)
+
+        switch_based_on_current_mode()
 
 Thread(target=button_thread, daemon=True).start()
 
 def setup():
     image_cycler.setup()
 
-    Thread(target=scheduler, daemon=True).start() #TODO - needs to reset every day
+    Thread(target=scheduler, daemon=True).start()
 
 def main():
     setup()
