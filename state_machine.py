@@ -1,5 +1,6 @@
 import os
 import time
+import datetime
 import logging
 
 from enum import Enum, auto
@@ -104,13 +105,18 @@ def main():
         match current_mode:
             case DisplayMode.CTA:
                 exit.clear()
+                # The image cycling time is non-negligible -- will eventually compound and stop refreshing with same interval each time
+                current_time = datetime.datetime.now()
+                next_refresh_time = current_time + datetime.timedelta(seconds=mode_settings.cta_refresh_seconds)
+                next_refresh_time = next_refresh_time.strftime("%I:%M %p")
+
                 arrivals_data = data_parsers.get_and_parse_data(data_parsers.route_to_ids["Racine"]["id"], data_parsers.route_to_ids["Racine"]["transport_mode"])
                 image = Image.new("RGB", (inky_display.width, inky_display.height), draw_backgrounds.BLACK)
                 image = draw_backgrounds.create_arrivals_background(inky_display, arrivals_data, image)
                 draw_backgrounds.save_image(image, os.path.join(draw_backgrounds.ui_dir, "./cta_ui.png"))
                 image_cycler.displays["cta"].set_current_image()
                 image_cycler.displays["cta"].display_current_image(inky_display, last_update_color=draw_backgrounds.WHITE, last_update_fnt=draw_backgrounds.fnt_small)
-                exit.wait(mode_settings.cta_refresh_seconds)
+                exit.wait(image_cycler.calc_time_until_refresh(next_refresh_time))
 
             case DisplayMode.CATS:
                 exit.clear()
