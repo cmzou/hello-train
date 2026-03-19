@@ -30,7 +30,7 @@ def parse_data(arrivals_data: pd.DataFrame, transport_mode) -> None:
         arrivals_data["arrT"] = pd.to_datetime(arrivals_data["arrT"])
         arrivals_data["nmArr"] = arrivals_data["destNm"]
     elif transport_mode == "bus":
-        arrivals_data["nmArr"] = arrivals_data["rtdir"] + " to " + arrivals_data["des"]
+        arrivals_data["nmArr"] = arrivals_data["rtdir"] + " to \n" + arrivals_data["des"]
 
 """
 Calculate the time remaining from the arrival time and current time

@@ -24,13 +24,33 @@ fnt_small = ImageFont.truetype("./fonts/FreeSans.otf", size=font_size)
 fnt_large = ImageFont.truetype("./fonts/FreeSansBold.otf", size=font_size_large)
 
 # Functions
+def divide_vspace_rectangles(inky_display, num_rectangles: int) -> tuple[int, int, int, int]:
+    arrival_box_x1 = h_pad
+    arrival_box_x2 = inky_display.width - h_pad
+    arrival_box_height = ((inky_display.height - arrivals_offset) - (num_rectangles * v_pad)) / num_rectangles
+    arrival_box_width = arrival_box_x2 - arrival_box_x1
+
+    return arrival_box_x1, arrival_box_x2, arrival_box_width, arrival_box_height
+
+"""
+Calculates the optimal font size that fits font_perc of the max_height
+"""
+def calc_font_sizes(text: str, font_path: str, max_height: int, font_perc: float):
+    font_size = 1
+
+    increment_font = ImageFont.truetype(font_path, font_size)
+    while increment_font.getbbox(text)[3] < max_height * font_perc:
+        # iterate until the text size is just larger than the criteria
+        font_size += 1
+        increment_font = ImageFont.truetype(font_path, font_size)
+
+    return font_size
+
 def create_arrivals_background(inky_display, arrivals_data: pd.DataFrame, image: Image) -> Image:
     draw = ImageDraw.Draw(image)
 
     n_arrivals = arrivals_data.shape[0]
-    arrival_box_height = ((inky_display.height - arrivals_offset) - (n_arrivals * v_pad)) / n_arrivals
-    arrival_box_x1 = h_pad
-    arrival_box_x2 = inky_display.width - h_pad
+    arrival_box_x1, arrival_box_x2, _, arrival_box_height = divide_vspace_rectangles(inky_display, n_arrivals)
 
     # Draw each rectangle
     for i, row in arrivals_data.iterrows():
@@ -54,35 +74,52 @@ def create_arrivals_background(inky_display, arrivals_data: pd.DataFrame, image:
         min_text_width = fnt_small.getbbox("min")[2]
         min_text_height = fnt_small.getbbox("min")[3]
 
+        arrival_destination_text = row["nmArr"]
+        arrival_time_text = row["tTArr"]
+
+        arrival_destination_text_list = arrival_destination_text.split("\n")
+        if len(arrival_destination_text_list) == 1:
+            arrival_destination_text_top = ""
+            arrival_destination_text_bottom = arrival_destination_text_list[0]
+        else:
+            arrival_destination_text_top = arrival_destination_text_list[0]
+            arrival_destination_text_bottom = arrival_destination_text_list[1]
+
         # Write arrivals text
         new_dest_align = align_text(
             (arrival_box_x1 + h_pad, (i_arrival_box_y1 + i_arrival_box_y2) / 2),
-            row["nmArr"],
+            arrival_destination_text_top,
             fnt_large
         )
         new_arr_align = align_text(
             (arrival_box_x2 - h_pad - min_text_width, (i_arrival_box_y1 + i_arrival_box_y2) / 2),
-            row["tTArr"],
+            arrival_time_text,
             fnt_large,
             align="right"
         )
 
         draw.text(
             new_dest_align,
-            row["nmArr"],
+            arrival_destination_text_bottom,
             WHITE,
             font=fnt_large
         )
         draw.text(
+            new_dest_align,
+            arrival_destination_text_top,
+            WHITE,
+            font=fnt_small
+        )
+        draw.text(
             new_arr_align,
-            row["tTArr"],
+            arrival_time_text,
             WHITE,
             font=fnt_large
         )
         draw.text(
             (
-                new_arr_align[0] + fnt_large.getbbox(row["tTArr"])[2] + (h_pad / 2),
-                new_arr_align[1] + fnt_large.getbbox(row["tTArr"])[3] - min_text_height
+                new_arr_align[0] + fnt_large.getbbox(arrival_time_text)[2] + (h_pad / 2),
+                new_arr_align[1] + fnt_large.getbbox(arrival_time_text)[3] - min_text_height
             ),
             "min",
             WHITE,
