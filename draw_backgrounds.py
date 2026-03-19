@@ -35,7 +35,7 @@ def divide_vspace_rectangles(inky_display, num_rectangles: int) -> tuple[int, in
 """
 Calculates the optimal font size that fits font_perc of the max_height
 """
-def calc_font_sizes(text: str, font_path: str, max_height: int, font_perc: float):
+def calc_font_sizes(text: str, font_path: str, max_height: int, font_perc: float) -> int:
     font_size = 1
 
     increment_font = ImageFont.truetype(font_path, font_size)
