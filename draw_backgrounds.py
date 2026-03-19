@@ -86,9 +86,15 @@ def create_arrivals_background(inky_display, arrivals_data: pd.DataFrame, image:
             arrival_destination_text_bottom = arrival_destination_text_list[1]
 
         # Write arrivals text
+        top_text_align = align_text(
+            (arrival_box_x1 + h_pad, i_arrival_box_y1 + v_pad),
+            arrival_destination_text_bottom,
+            fnt_small,
+            v_align=0
+        )
         new_dest_align = align_text(
             (arrival_box_x1 + h_pad, (i_arrival_box_y1 + i_arrival_box_y2) / 2),
-            arrival_destination_text_top,
+            arrival_destination_text_bottom,
             fnt_large
         )
         new_arr_align = align_text(
@@ -99,16 +105,16 @@ def create_arrivals_background(inky_display, arrivals_data: pd.DataFrame, image:
         )
 
         draw.text(
+            top_text_align,
+            arrival_destination_text_top,
+            WHITE,
+            font=fnt_small
+        )
+        draw.text(
             new_dest_align,
             arrival_destination_text_bottom,
             WHITE,
             font=fnt_large
-        )
-        draw.text(
-            new_dest_align,
-            arrival_destination_text_top,
-            WHITE,
-            font=fnt_small
         )
         draw.text(
             new_arr_align,
