@@ -9,6 +9,12 @@
 
 Pushing the button corresponding to the current mode will refresh the mode.
 
+### Mode Specific Operations
+
+#### CTA Mode
+
+Toggle saved routes
+
 ## Settings
 
 * select which train/bus lines to display

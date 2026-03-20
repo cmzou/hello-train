@@ -1,7 +1,7 @@
 [project]
 name = "hello-train"
 version = "0.1.0"
-description = "Add your description here"
+description = "Application that acts as a public transit tracker and photo album."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [

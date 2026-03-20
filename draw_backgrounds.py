@@ -46,6 +46,9 @@ def calc_font_sizes(text: str, font_path: str, max_height: int, font_perc: float
 
     return font_size
 
+def edit_for_overlaps(text_list: list[str]) -> list[str]:
+    return text_list
+
 def create_arrivals_background(inky_display, arrivals_data: pd.DataFrame, image: Image) -> Image:
     draw = ImageDraw.Draw(image)
 
@@ -78,6 +81,10 @@ def create_arrivals_background(inky_display, arrivals_data: pd.DataFrame, image:
         arrival_time_text = row["tTArr"]
 
         arrival_destination_text_list = arrival_destination_text.split("\n")
+
+        # Parse for overlaps
+        arrival_destination_text_list = edit_for_overlaps(arrival_destination_text_list)
+
         if len(arrival_destination_text_list) == 1:
             arrival_destination_text_top = ""
             arrival_destination_text_bottom = arrival_destination_text_list[0]
