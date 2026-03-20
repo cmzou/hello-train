@@ -174,4 +174,3 @@ Save the image out. This is because Inky Impressions renders it better as a PNG 
 """
 def save_image(image: Image, out_path: str) -> None:
     image.save(out_path, "PNG")
-

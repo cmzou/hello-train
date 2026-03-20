@@ -1,5 +1,5 @@
 import state_machine
-import image_cycler
+from display import image_cycler
 
 import logging
 
@@ -16,3 +16,4 @@ if __name__ == "__main__":
     except Exception as e:
         logger.error("Error detected:", e)
         image_cycler.displays["error"].display_current_image(state_machine.inky_display)
+

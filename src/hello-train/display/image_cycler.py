@@ -4,7 +4,7 @@ import os
 
 from PIL import Image, ImageDraw
 
-import mode_settings
+from config import mode_settings
 
 image_saturation = 0.75
 

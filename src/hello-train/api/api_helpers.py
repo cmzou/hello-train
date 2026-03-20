@@ -1,7 +1,7 @@
 import pandas as pd
 
 import requests
-import settings
+from config import settings
 
 max_results_returned = 4
 max_retries = 3

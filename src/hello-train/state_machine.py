@@ -5,10 +5,9 @@ import logging
 
 from enum import Enum, auto
 
-import image_cycler
-import draw_backgrounds
-import data_parsers
-import mode_settings
+from display import draw_backgrounds, image_cycler
+from data import data_parsers
+from config import mode_settings
 
 import gpiod
 import gpiodevice
