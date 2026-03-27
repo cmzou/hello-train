@@ -69,7 +69,7 @@ def handle_button(event):
     if label == "D":
         if current_mode == DisplayMode.CTA:
             global current_route_i
-            current_route_i = get_next_i_in_list()
+            current_route_i = get_next_i_in_list(current_route_i, mode_settings.display_routes)
 
 def button_thread():
     while True:
