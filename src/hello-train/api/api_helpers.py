@@ -1,7 +1,7 @@
 import pandas as pd
 
 import requests
-from config import settings
+from config import secrets
 
 max_results_returned = 4
 max_retries = 3
@@ -11,7 +11,7 @@ def call_get_train_arrivals(map_id: int) -> dict:
 
     payload = {
         "mapid": map_id,
-        "key": settings.settings.config["API"]["CTA_API_KEY"],
+        "key": secrets.secrets.config["API"]["CTA_API_KEY"],
         "outputType": "JSON",
         "max": max_results_returned
     }
@@ -30,7 +30,7 @@ def call_get_bus_arrivals(stp_id: int) -> dict:
 
     payload = {
         "stpid": stp_id,
-        "key": settings.settings.config["API"]["BUS_API_KEY"],
+        "key": secrets.secrets.config["API"]["BUS_API_KEY"],
         "format": "json",
         "top": max_results_returned
     }
