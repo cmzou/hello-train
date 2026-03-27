@@ -16,4 +16,3 @@ if __name__ == "__main__":
     except Exception as e:
         logger.error("Error detected:", e)
         image_cycler.displays["error"].display_current_image(state_machine.inky_display)
-

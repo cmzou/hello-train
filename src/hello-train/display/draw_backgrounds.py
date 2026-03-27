@@ -21,7 +21,8 @@ arrivals_offset = v_pad * 2 + font_size
 
 # Fonts
 fnt_small = ImageFont.truetype("./fonts/FreeSans.otf", size=font_size)
-fnt_large = ImageFont.truetype("./fonts/FreeSansBold.otf", size=font_size_large)
+font_large_path = "./fonts/FreeSansBold.otf"
+fnt_large = ImageFont.truetype(font_large_path, size=font_size_large)
 
 # Functions
 def divide_vspace_rectangles(inky_display, num_rectangles: int) -> tuple[int, int, int, int]:
@@ -40,20 +41,44 @@ def calc_font_sizes(text: str, font_path: str, max_height: int, font_perc: float
 
     increment_font = ImageFont.truetype(font_path, font_size)
     while increment_font.getbbox(text)[3] < max_height * font_perc:
-        # iterate until the text size is just larger than the criteria
+        # Iterate until the text size is just larger than the criteria
         font_size += 1
         increment_font = ImageFont.truetype(font_path, font_size)
 
     return font_size
 
-def edit_for_overlaps(text_list: list[str]) -> list[str]:
+"""
+For each text in a given list of strings, truncate the text if it's longer than the given length
+
+Params:
+    text_list: list of strings to truncate
+    font_path: path to the font to check the length of
+    font_size: size of the font
+    max_length: max length in pixels each string can be
+    truncation_type: order of truncation until the text fits:
+        length: simple truncation from the right; delete each character until the text fits
+        vowel: delete each vowel from the right until the text fits
+"""
+def edit_for_overlaps(text_list: list[str], font_path: str, font_size: int, max_length: int) -> list[str]:
+    fnt_object = ImageFont.truetype(font_path, size=font_size)
+    for i in range(len(text_list)):
+        initial_text = text_list[i]
+        current_length = fnt_object.getbbox(initial_text)[2]
+        while current_length > max_length:
+            text = text_list[i]
+
+            if len(text) <= 1:
+                break
+            current_length = fnt_object.getbbox(text)[2]
+            if current_length > max_length:
+                text_list[i] = text[0:-1]
     return text_list
 
 def create_arrivals_background(inky_display, arrivals_data: pd.DataFrame, image: Image) -> Image:
     draw = ImageDraw.Draw(image)
 
     n_arrivals = arrivals_data.shape[0]
-    arrival_box_x1, arrival_box_x2, _, arrival_box_height = divide_vspace_rectangles(inky_display, n_arrivals)
+    arrival_box_x1, arrival_box_x2, arrival_box_width, arrival_box_height = divide_vspace_rectangles(inky_display, n_arrivals)
 
     # Draw each rectangle
     for i, row in arrivals_data.iterrows():
@@ -83,7 +108,7 @@ def create_arrivals_background(inky_display, arrivals_data: pd.DataFrame, image:
         arrival_destination_text_list = arrival_destination_text.split("\n")
 
         # Parse for overlaps
-        arrival_destination_text_list = edit_for_overlaps(arrival_destination_text_list)
+        arrival_destination_text_list[1:] = edit_for_overlaps(arrival_destination_text_list[1:], font_large_path, font_size_large, arrival_box_width * 0.75)
 
         if len(arrival_destination_text_list) == 1:
             arrival_destination_text_top = ""
