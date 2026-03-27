@@ -26,9 +26,9 @@ inky_display = inky_auto(ask_user=True, verbose=True)
 class DisplayMode(Enum):
     CTA = auto()
     CATS = auto()
-    SETTINGS = auto()
 
 current_mode = DisplayMode.CTA
+current_route_i = 0
 
 BUTTONS = [5, 6, 16, 24]
 LABELS = ["A", "B", "C", "D"]
@@ -65,6 +65,12 @@ def handle_button(event):
     if label == "B":
         switch_to_cats()
 
+    # Mode specific actions
+    if label == "D":
+        if current_mode == DisplayMode.CTA:
+            global current_route_i
+            current_route_i = get_next_i_in_list()
+
 def button_thread():
     while True:
         for event in request.read_edge_events():
@@ -75,6 +81,16 @@ def switch_based_on_current_mode():
         switch_to_cats()
     else:
         switch_to_cta()
+
+"""
+Returns the next valid index sequentially in a list
+"""
+def get_next_i_in_list(current_i: int, ls: list):
+    if current_i + 1 >= len(ls):
+        current_i = 0
+    else:
+        current_i += 1
+    return current_i
 
 def scheduler():
     while True:
@@ -109,7 +125,8 @@ def main():
                 next_refresh_time = current_time + datetime.timedelta(seconds=mode_settings.cta_refresh_seconds)
                 next_refresh_time = next_refresh_time.strftime("%I:%M %p")
 
-                arrivals_data = data_parsers.get_and_parse_data(data_parsers.route_to_ids["Racine"]["id"], data_parsers.route_to_ids["Racine"]["transport_mode"])
+                current_route = mode_settings.display_routes[current_route_i]
+                arrivals_data = data_parsers.get_and_parse_data(data_parsers.route_to_ids[current_route]["id"], data_parsers.route_to_ids[current_route]["transport_mode"])
                 image = Image.new("RGB", (inky_display.width, inky_display.height), draw_backgrounds.BLACK)
                 image = draw_backgrounds.create_arrivals_background(inky_display, arrivals_data, image)
                 draw_backgrounds.save_image(image, os.path.join(draw_backgrounds.ui_dir, "./cta_ui.png"))
