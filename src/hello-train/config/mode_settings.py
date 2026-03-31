@@ -8,7 +8,7 @@ display_routes = ["Racine", "Ashland & Van Buren"] # which train/bus stations/st
 
 cta_refresh_seconds = 60 * 5 # not recommended < 3 minutes due to refresh speed and display lifespan
 
-min_arrival_to_omit = 5 # minutes until arrival to omit if less than; useful to set as the minimum time to get to station/stop
+min_arrival_to_omit = 3 # minutes until arrival to omit if less than; useful to set as the minimum time to get to station/stop
 
 enable_scheduled_display = True # whether to automatically switch to this mode during certain time periods
 scheduled_intervals = [("7:00 AM", "7:30 AM")] # list[tuple[str, str]] of times to auto switch to; inclusion: [start, end)

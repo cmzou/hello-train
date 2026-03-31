@@ -1,4 +1,4 @@
-config.*
+secrets.*
 images/
 __pycache__/
 *.png

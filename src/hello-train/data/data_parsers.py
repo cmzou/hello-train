@@ -2,6 +2,7 @@ import pandas as pd
 import datetime
 
 from api import api_helpers
+from config import mode_settings
 
 route_to_ids = {
     "Racine": {
@@ -46,6 +47,9 @@ def calc_time_remaining(arrivals_data: pd.DataFrame, transport_mode: str) -> Non
         arrivals_data.loc[arrivals_data["isApp"] == 1, 'tTArr'] = "DUE"
     elif transport_mode == "bus":
         arrivals_data["tTArr"] = arrivals_data["prdctdn"]
+
+    arrivals_data.drop(arrivals_data[arrivals_data["tTArr"].astype(int) < mode_settings.min_arrival_to_omit].index, inplace=True)
+    arrivals_data.reset_index(drop=True, inplace=True)
 
 """
 Given a route ID and type, get the data
