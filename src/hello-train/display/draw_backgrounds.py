@@ -78,6 +78,17 @@ def create_arrivals_background(inky_display, arrivals_data: pd.DataFrame, image:
     draw = ImageDraw.Draw(image)
 
     n_arrivals = arrivals_data.shape[0]
+
+    if n_arrivals == 0:
+        draw.text(
+            (h_pad, v_pad),
+            "No arrivals data.",
+            WHITE,
+            font=fnt_large
+        )
+
+        return image
+
     arrival_box_x1, arrival_box_x2, arrival_box_width, arrival_box_height = divide_vspace_rectangles(inky_display, n_arrivals)
 
     # Draw each rectangle
