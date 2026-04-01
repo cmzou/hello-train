@@ -2,7 +2,7 @@ import pandas as pd
 import datetime
 
 from data import get_data
-from config import mode_settings
+from config import mode_settings, app_settings
 
 route_to_ids = {
     "Racine": {
@@ -64,5 +64,7 @@ def get_and_parse_data(route_id: str, transport_mode: str) -> None:
 
     parse_data(arrivals_data, transport_mode)
     calc_time_remaining(arrivals_data, transport_mode)
+
+    arrivals_data = arrivals_data.iloc[0:app_settings.max_results_returned]
 
     return arrivals_data
