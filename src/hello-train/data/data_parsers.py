@@ -1,7 +1,7 @@
 import pandas as pd
 import datetime
 
-from api import api_helpers
+from data import get_data
 from config import mode_settings
 
 route_to_ids = {
@@ -56,9 +56,9 @@ Given a route ID and type, get the data
 """
 def get_and_parse_data(route_id: str, transport_mode: str) -> None:
     if transport_mode == "train":
-        arrivals_data = api_helpers.get_train_arrivals(route_id)
+        arrivals_data = get_data.get_train_arrivals(route_id)
     elif transport_mode == "bus":
-        arrivals_data = api_helpers.get_bus_arrivals(route_id)
+        arrivals_data = get_data.get_bus_arrivals(route_id)
     else:
         raise ValueError(f"Invalid transport_mode give: {transport_mode}")
 
