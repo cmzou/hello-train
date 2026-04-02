@@ -15,7 +15,6 @@ def call_get_train_arrivals(map_id: int) -> dict:
         "max": app_settings.max_results_returned*2
     }
 
-
     for i in range(app_settings.max_retries):
         try:
             resp = requests.get(arrivals_url, params=payload)
@@ -49,11 +48,26 @@ def call_get_bus_arrivals(stp_id: int) -> dict:
         "top": app_settings.max_results_returned*2
     }
 
-    resp = requests.get(arrivals_url, params=payload)
+    for i in range(app_settings.max_retries):
+        try:
+            resp = requests.get(arrivals_url, params=payload)
+            resp.raise_for_status()
+            return resp.json()
+        except requests.Timeout as e:
+            time.sleep(5)
+        except requests.HTTPError as e:
+            if 500 <= e.response.status_code < 600:  # Server error - retry
+                time.sleep(5)
+            else:
+                raise e
 
-    return resp.json()
+    return {}
 
 def get_bus_arrivals(stp_id: int) -> pd.DataFrame:
-    arrivals_resp = call_get_bus_arrivals(stp_id)
+    try:
+        arrivals_resp = call_get_bus_arrivals(stp_id)
 
-    return pd.DataFrame(arrivals_resp["bustime-response"]["prd"])
+        return pd.DataFrame(arrivals_resp["bustime-response"]["prd"])
+    except (requests.RequestException, KeyError, ValueError):
+        return pd.DataFrame()
+
