@@ -1,4 +1,4 @@
-secrets.*
+secrets.yml
 images/
 __pycache__/
 *.png

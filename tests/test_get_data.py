@@ -1,7 +1,9 @@
 import unittest
 from unittest.mock import patch, MagicMock
 import requests
+
 from data import get_data
+from config import app_settings
 
 class TestTrainArrivalsErrorHandling(unittest.TestCase):
     
@@ -13,7 +15,7 @@ class TestTrainArrivalsErrorHandling(unittest.TestCase):
         result = get_data.call_get_train_arrivals(40470)
         
         # Should have been called max_retries times
-        self.assertEqual(mock_get.call_count, get_data.max_retries)
+        self.assertEqual(mock_get.call_count, app_settings.max_retries)
         # Should return empty dict after retries exhausted
         self.assertEqual(result, {})
     
@@ -26,7 +28,7 @@ class TestTrainArrivalsErrorHandling(unittest.TestCase):
         
         result = get_data.call_get_train_arrivals(40470)
         
-        self.assertEqual(mock_get.call_count, get_data.max_retries)
+        self.assertEqual(mock_get.call_count, app_settings.max_retries)
         self.assertEqual(result, {})
     
     @patch('data.get_data.requests.get')
@@ -49,7 +51,7 @@ class TestTrainArrivalsErrorHandling(unittest.TestCase):
         mock_response.json.return_value = {
             "ctatt": {
                 "eta": [
-                    {"arrT": "2026-04-01T10:30:00", "destNm": "Downtown"},
+                    {"arrT": "2026-04-01T10:30:00", "destNm": "O'Hare"},
                 ]
             }
         }
