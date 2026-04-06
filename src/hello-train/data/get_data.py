@@ -71,3 +71,63 @@ def get_bus_arrivals(stp_id: int) -> pd.DataFrame:
     except (requests.RequestException, KeyError, ValueError):
         return pd.DataFrame()
 
+"""
+Get and save necessary bus route data for querying and display
+"""
+def call_get_bus_routes() -> dict:
+    routes_url = "https://www.ctabustracker.com/bustime/api/v3/getroutes"
+
+    payload = {
+        "key": secrets.secrets.config["API"]["BUS_API_KEY"],
+        "format": "json",
+    }
+
+    for i in range(app_settings.max_retries):
+        try:
+            resp = requests.get(routes_url, params=payload)
+            resp.raise_for_status()
+            return resp.json()
+        except requests.Timeout as e:
+            time.sleep(5)
+        except requests.HTTPError as e:
+            if 500 <= e.response.status_code < 600:  # Server error - retry
+                time.sleep(5)
+            else:
+                raise e
+
+    return {}
+
+def get_bus_routes() -> pd.DataFrame:
+    try:
+        routes_data = call_get_bus_routes()
+        routes_df = pd.DataFrame(routes_data["bustime-response"]["routes"])
+        routes_df.to_csv("./data/routes.csv", index=False)
+    except (requests.RequestException, KeyError, ValueError):
+        # Use old data
+        routes_df = pd.read_csv("./data/routes.csv", index=False)
+
+    return routes_df
+
+def get_bus_stops(route_id: int) -> dict:
+    pass
+
+def search_call_get_bus_data(search_str: str, routes_df: pd.DataFrame) -> None:
+    search_results = routes_df[routes_df["rtnm"].str.lower().str.contains(search_str.lower)]
+
+    try:
+        # Find stop id by name
+        stops_df = get_bus_stops()
+    except:
+        pass
+
+
+    stops_url = "https://www.ctabustracker.com/bustime/api/v3/getstops"
+    directions_url = "https://www.ctabustracker.com/bustime/api/v3/getdirections"
+
+    try:
+        # Find stop id by name
+        directions_data = requests.get(directions_url, params={**payload, "rt": route_id})
+        stops_data = requests.get(stops_url, params={**payload, "rt": route_id, "dir": direction})
+
+    except:
+        pass

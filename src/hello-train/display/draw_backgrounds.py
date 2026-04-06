@@ -1,6 +1,8 @@
 import pandas as pd
 from PIL import Image, ImageDraw, ImageFont
 
+from config.app_settings import ui_dir
+
 font_size = 20
 font_size_large = 70
 v_pad = 5 # num of pixels between each arrivals box
@@ -14,8 +16,6 @@ train_to_colors = {
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
-
-ui_dir = "./ui"
 
 arrivals_offset = v_pad * 2 + font_size
 

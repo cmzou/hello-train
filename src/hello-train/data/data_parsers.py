@@ -31,7 +31,7 @@ def parse_data(arrivals_data: pd.DataFrame, transport_mode) -> None:
         arrivals_data["arrT"] = pd.to_datetime(arrivals_data["arrT"])
         arrivals_data["nmArr"] = arrivals_data["destNm"]
     elif transport_mode == "bus":
-        arrivals_data["nmArr"] = arrivals_data["rtdir"] + " to \n" + arrivals_data["des"]
+        arrivals_data["nmArr"] = "#" + arrivals_data["rt"] + " " + arrivals_data["stpnm"].str[0:5] + " " + arrivals_data["rtdir"] + " to \n" + arrivals_data["des"]
 
 """
 Calculate the time remaining from the arrival time and current time
@@ -44,17 +44,19 @@ def calc_time_remaining(arrivals_data: pd.DataFrame, transport_mode: str) -> Non
         arrivals_data["tTArr"] = arrivals_data["tTArr"] / 60
         arrivals_data["tTArr"] = arrivals_data["tTArr"].round().astype(int)
         arrivals_data["tTArr"] = arrivals_data["tTArr"].astype(str)
-        arrivals_data.loc[arrivals_data["isApp"] == 1, 'tTArr'] = "DUE"
+        arrivals_data.loc[arrivals_data["isApp"] == 1, "tTArr"] = "0"
     elif transport_mode == "bus":
         arrivals_data["tTArr"] = arrivals_data["prdctdn"]
+        arrivals_data.loc[arrivals_data["tTArr"] == "DUE", "tTArr"] = "0"
 
-    arrivals_data.drop(arrivals_data[arrivals_data["tTArr"].astype(int) < mode_settings.min_arrival_to_omit].index, inplace=True)
+    arrivals_data.drop(arrivals_data[(arrivals_data["tTArr"].astype(int) < mode_settings.min_arrival_to_omit)].index, inplace=True)
+    arrivals_data.loc[arrivals_data["tTArr"] == 0, "tTArr"] = "DUE"
     arrivals_data.reset_index(drop=True, inplace=True)
 
 """
 Given a route ID and type, get the data
 """
-def get_and_parse_data(route_id: str, transport_mode: str) -> None:
+def get_and_parse_data(route_id: str, transport_mode: str) -> pd.DataFrame:
     if transport_mode == "train":
         arrivals_data = get_data.get_train_arrivals(route_id)
     elif transport_mode == "bus":
@@ -68,3 +70,9 @@ def get_and_parse_data(route_id: str, transport_mode: str) -> None:
     arrivals_data = arrivals_data.iloc[0:app_settings.max_results_returned]
 
     return arrivals_data
+
+"""
+Given a route name and type, search for the data
+"""
+def search_data(transport_mode: str, route_name: str) -> None:
+    pass
