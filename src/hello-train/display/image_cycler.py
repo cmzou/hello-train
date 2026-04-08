@@ -6,6 +6,10 @@ from PIL import Image, ImageDraw
 
 from config import mode_settings
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 image_saturation = 0.75
 
 displays = {}
@@ -88,7 +92,9 @@ class ImageDisplay:
                 self.current_image = self.image_paths[0]
                 self.current_image_i = 0
             else:
-                self.current_image = self.image_paths[get_next_i_in_list(self.current_image_i, self.image_paths)]
+                next_image_i = get_next_i_in_list(self.current_image_i, self.image_paths)
+                self.current_image = self.image_paths[next_image_i]
+                self.current_image_i = next_image_i
         else:
             raise ValueError(f"Unknown shuffle_type given: {self.shuffle_type}")
 
