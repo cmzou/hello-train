@@ -32,11 +32,27 @@ def calc_time_until_refresh(refresh_time: str) -> int:
 
     return time_until_refresh.total_seconds()
 
-class ImageDisplay:
-    def __init__(self, images: str | list[str]) -> None:
-        self.image_paths = self.get_images_to_display(images)
-        self.set_current_image()
+"""
+Returns the next valid index sequentially in a list
+"""
+def get_next_i_in_list(current_i: int, ls: list):
+    if current_i + 1 >= len(ls):
+        current_i = 0
+    else:
+        current_i += 1
+    return current_i
 
+class ImageDisplay:
+    """
+    Params:
+        shuffle_type: how should the images be set; accepted values: sequential, random (default)
+    """
+    def __init__(self, images: str | list[str], shuffle_type: str="random") -> None:
+        self.image_paths = self.get_images_to_display(images)
+        self.shuffle_type = shuffle_type
+        self.current_image_i = -1
+        self.set_current_image()
+        
     """
     Resolve the given images to display. Does NOT check if it is a valid image file.
 
@@ -65,7 +81,16 @@ class ImageDisplay:
     Set the current image from the given images
     """
     def set_current_image(self):
-        self.current_image = random.choice(self.image_paths)
+        if self.shuffle_type == "random":
+            self.current_image = random.choice(self.image_paths)
+        elif self.shuffle_type == "sequential":
+            if self.current_image_i == -1:
+                self.current_image = self.image_paths[0]
+                self.current_image_i = 0
+            else:
+                self.current_image = self.image_paths[get_next_i_in_list(self.current_image_i, self.image_paths)]
+        else:
+            raise ValueError(f"Unknown shuffle_type given: {self.shuffle_type}")
 
     """
     Display the current image

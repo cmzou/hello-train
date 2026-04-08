@@ -69,7 +69,7 @@ def handle_button(event):
     if label == "D":
         if current_mode == DisplayMode.CTA:
             global current_route_i
-            current_route_i = get_next_i_in_list(current_route_i, mode_settings.display_routes)
+            current_route_i = image_cycler.get_next_i_in_list(current_route_i, mode_settings.display_routes)
             exit.set()
 
 def button_thread():
@@ -82,16 +82,6 @@ def switch_based_on_current_mode():
         switch_to_cats()
     else:
         switch_to_cta()
-
-"""
-Returns the next valid index sequentially in a list
-"""
-def get_next_i_in_list(current_i: int, ls: list):
-    if current_i + 1 >= len(ls):
-        current_i = 0
-    else:
-        current_i += 1
-    return current_i
 
 def scheduler():
     while True:
