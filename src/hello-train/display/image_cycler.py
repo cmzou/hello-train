@@ -108,7 +108,10 @@ class ImageDisplay:
 
 def setup():
     cta_display = ImageDisplay("./ui/cta_ui.png")
-    cat_display = ImageDisplay(mode_settings.image_dir)
+    if mode_settings.enable_shuffle:
+        cat_display = ImageDisplay(mode_settings.image_dir)
+    else:
+        cat_display = ImageDisplay(mode_settings.image_dir, shuffle_type="sequential")
     error_display = ImageDisplay("./images/special/error.png")
 
     displays["cta"] = cta_display
