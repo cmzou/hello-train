@@ -33,7 +33,7 @@ class DisplayMode(Enum):
     CTA = auto()
     CATS = auto()
 
-current_mode = DisplayMode.CTA
+current_mode = DisplayMode.CATS
 current_route_i = 0
 
 BUTTONS = [5, 6, 16, 24]
