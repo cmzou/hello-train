@@ -1,7 +1,6 @@
 import pandas as pd
 from PIL import Image, ImageDraw, ImageFont
 
-from config.app_settings import ui_dir
 from util import util
 
 font_size = 20

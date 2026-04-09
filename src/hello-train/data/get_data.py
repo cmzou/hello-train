@@ -23,12 +23,12 @@ def call_get_train_arrivals(map_id: int) -> dict:
             resp = requests.get(arrivals_url, params=payload)
             resp.raise_for_status()
             return resp.json()
-        except requests.Timeout as e:
+        except requests.Timeout:
             logger.info(f"Requests timed out, sleeping {i} out of {app_settings.max_retries}...")
             time.sleep(5)
         except requests.HTTPError as e:
             if 500 <= e.response.status_code < 600:  # Server error - retry
-                logger.info(f"Server error, sleeping {i} out of {app_settings.max_retries}...")
+                logger.info(f"Train arrivals server error, sleeping {i} out of {app_settings.max_retries}...")
                 time.sleep(5)
             else:
                 raise e
@@ -58,12 +58,12 @@ def call_get_bus_arrivals(stp_id: int) -> dict:
             resp = requests.get(arrivals_url, params=payload)
             resp.raise_for_status()
             return resp.json()
-        except requests.Timeout as e:
+        except requests.Timeout:
             logger.info(f"Requests timed out, sleeping {i} out of {app_settings.max_retries}...")
             time.sleep(5)
         except requests.HTTPError as e:
             if 500 <= e.response.status_code < 600:  # Server error - retry
-                logger.info(f"Server error, sleeping {i} out of {app_settings.max_retries}...")
+                logger.info(f"Bus arrivals server error, sleeping {i} out of {app_settings.max_retries}...")
                 time.sleep(5)
             else:
                 raise e
@@ -94,10 +94,12 @@ def call_get_bus_routes() -> dict:
             resp = requests.get(routes_url, params=payload)
             resp.raise_for_status()
             return resp.json()
-        except requests.Timeout as e:
+        except requests.Timeout:
+            logger.info(f"Requests timed out, sleeping {i} out of {app_settings.max_retries}...")
             time.sleep(5)
         except requests.HTTPError as e:
             if 500 <= e.response.status_code < 600:  # Server error - retry
+                logger.info(f"Bus routes server error, sleeping {i} out of {app_settings.max_retries}...")
                 time.sleep(5)
             else:
                 raise e

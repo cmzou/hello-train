@@ -2,7 +2,7 @@ import datetime
 import random
 import os
 
-from PIL import Image, ImageDraw
+from PIL import Image
 
 from config import mode_settings
 from display import draw_backgrounds
