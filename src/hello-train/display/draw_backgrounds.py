@@ -180,9 +180,10 @@ def create_arrivals_background(inky_display, arrivals_data: pd.DataFrame, image:
 
 def write_last_updated(image: Image):
     draw = ImageDraw.Draw(image)
-    last_update_xy = (0, 0)
+    last_update_xy = (h_pad, 0)
+    last_update_text = f"Last Updated: {util.get_current_time()}"
 
-    draw.text(last_update_xy, f"Last Updated: {util.get_current_time()}", fill=BLACK, font=fnt_small)
+    draw.text(last_update_xy, last_update_text, fill=WHITE, font=fnt_small, stroke_width=2, stroke_fill=BLACK)
 
     return image
 
