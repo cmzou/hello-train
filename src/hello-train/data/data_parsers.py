@@ -1,8 +1,11 @@
 import pandas as pd
 import datetime
+import logging
 
 from data import get_data
 from config import mode_settings, app_settings
+
+logger = logging.getLogger(__name__)
 
 route_to_ids = {
     "Racine": {
@@ -39,7 +42,8 @@ Modifies the dataframe in place and adds a new column "tTArr" (time 'till arriva
 """
 def calc_time_remaining(arrivals_data: pd.DataFrame, transport_mode: str) -> None:
     if transport_mode == "train":
-        arrivals_data["tTArr"] = arrivals_data["arrT"] - datetime.datetime.now()
+        current_time = datetime.datetime.now()
+        arrivals_data["tTArr"] = arrivals_data["arrT"] - current_time
         arrivals_data["tTArr"] = arrivals_data["tTArr"].apply(lambda x: x.total_seconds())
         arrivals_data["tTArr"] = arrivals_data["tTArr"] / 60
         arrivals_data["tTArr"] = arrivals_data["tTArr"].round().astype(int)
@@ -64,10 +68,11 @@ def get_and_parse_data(route_id: str, transport_mode: str) -> pd.DataFrame:
     else:
         raise ValueError(f"Invalid transport_mode give: {transport_mode}")
 
-    parse_data(arrivals_data, transport_mode)
-    calc_time_remaining(arrivals_data, transport_mode)
+    if arrivals_data.shape[0] != 0:
+        parse_data(arrivals_data, transport_mode)
+        calc_time_remaining(arrivals_data, transport_mode)
 
-    arrivals_data = arrivals_data.iloc[0:app_settings.max_results_returned]
+        arrivals_data = arrivals_data.iloc[0:app_settings.max_results_returned]
 
     return arrivals_data
 

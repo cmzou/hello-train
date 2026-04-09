@@ -14,5 +14,5 @@ if __name__ == "__main__":
     try:
         state_machine.main()
     except Exception as e:
-        logger.error("Error detected:", e)
+        logger.error(f"Error detected: {e}")
         image_cycler.displays["error"].display_current_image(state_machine.inky_display)

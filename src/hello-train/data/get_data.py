@@ -2,8 +2,11 @@ import pandas as pd
 
 import requests
 import time
+import logging
 
 from config import secrets, app_settings
+
+logger = logging.getLogger(__name__)
 
 def call_get_train_arrivals(map_id: int) -> dict:
     arrivals_url = "http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx"
@@ -21,9 +24,11 @@ def call_get_train_arrivals(map_id: int) -> dict:
             resp.raise_for_status()
             return resp.json()
         except requests.Timeout as e:
+            logger.info(f"Requests timed out, sleeping {i} out of {app_settings.max_retries}...")
             time.sleep(5)
         except requests.HTTPError as e:
             if 500 <= e.response.status_code < 600:  # Server error - retry
+                logger.info(f"Server error, sleeping {i} out of {app_settings.max_retries}...")
                 time.sleep(5)
             else:
                 raise e
@@ -54,9 +59,11 @@ def call_get_bus_arrivals(stp_id: int) -> dict:
             resp.raise_for_status()
             return resp.json()
         except requests.Timeout as e:
+            logger.info(f"Requests timed out, sleeping {i} out of {app_settings.max_retries}...")
             time.sleep(5)
         except requests.HTTPError as e:
             if 500 <= e.response.status_code < 600:  # Server error - retry
+                logger.info(f"Server error, sleeping {i} out of {app_settings.max_retries}...")
                 time.sleep(5)
             else:
                 raise e

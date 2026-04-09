@@ -3,6 +3,8 @@ import time
 import datetime
 import logging
 
+import pandas as pd
+
 from enum import Enum, auto
 
 from display import draw_backgrounds, image_cycler
@@ -22,6 +24,10 @@ from inky.auto import auto as inky_auto
 logger = logging.getLogger(__name__)
 
 inky_display = inky_auto(ask_user=True, verbose=True)
+
+pd.set_option('display.max_rows', 10)
+pd.set_option('display.max_columns', 50)
+pd.set_option('display.width', 150)
 
 class DisplayMode(Enum):
     CTA = auto()
