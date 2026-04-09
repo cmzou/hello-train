@@ -10,12 +10,13 @@ from enum import Enum, auto
 from display import draw_backgrounds, image_cycler
 from data import data_parsers
 from config import mode_settings, app_settings
+from util import util
 
 import gpiod
 import gpiodevice
 from gpiod.line import Bias, Direction, Edge
 
-from threading import Thread, Event, Timer
+from threading import Thread, Event
 
 from PIL import Image
 
@@ -75,7 +76,7 @@ def handle_button(event):
     if label == "D":
         if current_mode == DisplayMode.CTA:
             global current_route_i
-            current_route_i = image_cycler.get_next_i_in_list(current_route_i, mode_settings.display_routes)
+            current_route_i = util.get_next_i_in_list(current_route_i, mode_settings.display_routes)
             exit.set()
 
 def button_thread():
@@ -128,13 +129,13 @@ def main():
                 image = draw_backgrounds.create_arrivals_background(inky_display, arrivals_data, image)
                 draw_backgrounds.save_image(image, os.path.join(app_settings.ui_dir, "./cta_ui.png"))
                 image_cycler.displays["cta"].set_current_image()
-                image_cycler.displays["cta"].display_current_image(inky_display, last_update_color=draw_backgrounds.WHITE, last_update_fnt=draw_backgrounds.fnt_small)
+                image_cycler.displays["cta"].display_current_image(inky_display)
                 exit.wait(image_cycler.calc_time_until_refresh(next_refresh_time))
 
             case DisplayMode.CATS:
                 exit.clear()
                 image_cycler.displays["cat"].set_current_image()
-                image_cycler.displays["cat"].display_current_image(inky_display, last_update_color=draw_backgrounds.BLACK)
+                image_cycler.displays["cat"].display_current_image(inky_display)
                 if mode_settings.enable_scheduled_shuffle:
                     seconds_until_refresh = image_cycler.calc_time_until_refresh(mode_settings.scheduled_refresh_time)
                 else:

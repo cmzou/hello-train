@@ -2,6 +2,7 @@ import pandas as pd
 from PIL import Image, ImageDraw, ImageFont
 
 from config.app_settings import ui_dir
+from util import util
 
 font_size = 20
 font_size_large = 70
@@ -174,6 +175,14 @@ def create_arrivals_background(inky_display, arrivals_data: pd.DataFrame, image:
             WHITE,
             font=fnt_small
         )
+
+    return image
+
+def write_last_updated(image: Image):
+    draw = ImageDraw.Draw(image)
+    last_update_xy = (0, 0)
+
+    draw.text(last_update_xy, f"Last Updated: {util.get_current_time()}", fill=BLACK, font=fnt_small)
 
     return image
 

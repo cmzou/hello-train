@@ -5,6 +5,8 @@ import os
 from PIL import Image, ImageDraw
 
 from config import mode_settings
+from display import draw_backgrounds
+from util import util
 
 import logging
 
@@ -13,10 +15,6 @@ logger = logging.getLogger(__name__)
 image_saturation = 0.75
 
 displays = {}
-
-def get_current_time() -> str:
-    current_datetime = datetime.datetime.today()
-    return current_datetime.strftime("%Y/%m/%d %-I:%M:%S %p")
 
 """
 Given a refresh time of the form H:MM P, calculate the number of seconds until the next refresh.
@@ -35,16 +33,6 @@ def calc_time_until_refresh(refresh_time: str) -> int:
         time_until_refresh = next_datetime - current_datetime
 
     return time_until_refresh.total_seconds()
-
-"""
-Returns the next valid index sequentially in a list
-"""
-def get_next_i_in_list(current_i: int, ls: list):
-    if current_i + 1 >= len(ls):
-        current_i = 0
-    else:
-        current_i += 1
-    return current_i
 
 class ImageDisplay:
     """
@@ -92,7 +80,7 @@ class ImageDisplay:
                 self.current_image = self.image_paths[0]
                 self.current_image_i = 0
             else:
-                next_image_i = get_next_i_in_list(self.current_image_i, self.image_paths)
+                next_image_i = util.get_next_i_in_list(self.current_image_i, self.image_paths)
                 self.current_image = self.image_paths[next_image_i]
                 self.current_image_i = next_image_i
         else:
@@ -101,13 +89,11 @@ class ImageDisplay:
     """
     Display the current image
     """
-    def display_current_image(self, inky_display, last_update_xy=(0, 0), last_update_color=None, last_update_fnt=None):
+    def display_current_image(self, inky_display):
         image = Image.open(self.current_image)
         resizedimage = image.resize(inky_display.resolution)
 
-        draw = ImageDraw.Draw(resizedimage)
-
-        draw.text(last_update_xy, f"Last Updated: {get_current_time()}", fill=last_update_color, font=last_update_fnt)
+        resizedimage = draw_backgrounds.write_last_updated(resizedimage)
 
         inky_display.set_image(resizedimage, saturation=image_saturation)
         inky_display.show()
