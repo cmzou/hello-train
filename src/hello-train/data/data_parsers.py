@@ -66,7 +66,7 @@ def get_and_parse_data(route_id: str, transport_mode: str) -> pd.DataFrame:
     elif transport_mode == "bus":
         arrivals_data = get_data.get_bus_arrivals(route_id)
     else:
-        raise ValueError(f"Invalid transport_mode give: {transport_mode}")
+        raise ValueError(f"Invalid transport_mode given: {transport_mode}")
 
     if arrivals_data.shape[0] != 0:
         parse_data(arrivals_data, transport_mode)

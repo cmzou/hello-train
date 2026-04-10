@@ -23,12 +23,12 @@ def call_get_train_arrivals(map_id: int) -> dict:
             resp = requests.get(arrivals_url, params=payload)
             resp.raise_for_status()
             return resp.json()
-        except requests.Timeout:
+        except requests.Timeout as e:
             logger.info(f"Requests timed out, sleeping {i} out of {app_settings.max_retries}...")
             time.sleep(5)
         except requests.HTTPError as e:
             if 500 <= e.response.status_code < 600:  # Server error - retry
-                logger.info(f"Train arrivals server error, sleeping {i} out of {app_settings.max_retries}...")
+                logger.info(f"Server error, sleeping {i} out of {app_settings.max_retries}...")
                 time.sleep(5)
             else:
                 raise e
@@ -40,7 +40,11 @@ def get_train_arrivals(map_id: int) -> pd.DataFrame:
         arrivals_resp = call_get_train_arrivals(map_id)
 
         return pd.DataFrame(arrivals_resp["ctatt"]["eta"])
-    except (requests.RequestException, KeyError, ValueError):
+    except requests.ConnectionError:
+        # Likely no internet
+        return pd.DataFrame()
+    except (requests.RequestException, KeyError, ValueError) as e:
+        logger.error(f"Train arrivals endpoint failed with error: {e}")
         return pd.DataFrame()
 
 def call_get_bus_arrivals(stp_id: int) -> dict:
@@ -58,12 +62,12 @@ def call_get_bus_arrivals(stp_id: int) -> dict:
             resp = requests.get(arrivals_url, params=payload)
             resp.raise_for_status()
             return resp.json()
-        except requests.Timeout:
+        except requests.Timeout as e:
             logger.info(f"Requests timed out, sleeping {i} out of {app_settings.max_retries}...")
             time.sleep(5)
         except requests.HTTPError as e:
             if 500 <= e.response.status_code < 600:  # Server error - retry
-                logger.info(f"Bus arrivals server error, sleeping {i} out of {app_settings.max_retries}...")
+                logger.info(f"Server error, sleeping {i} out of {app_settings.max_retries}...")
                 time.sleep(5)
             else:
                 raise e
@@ -75,7 +79,8 @@ def get_bus_arrivals(stp_id: int) -> pd.DataFrame:
         arrivals_resp = call_get_bus_arrivals(stp_id)
 
         return pd.DataFrame(arrivals_resp["bustime-response"]["prd"])
-    except (requests.RequestException, KeyError, ValueError):
+    except (requests.RequestException, KeyError, ValueError) as e:
+        logger.error(f"Bus arrivals endpoint failed with error: {e}")
         return pd.DataFrame()
 
 """
@@ -111,8 +116,9 @@ def get_bus_routes() -> pd.DataFrame:
         routes_data = call_get_bus_routes()
         routes_df = pd.DataFrame(routes_data["bustime-response"]["routes"])
         routes_df.to_csv("./data/routes.csv", index=False)
-    except (requests.RequestException, KeyError, ValueError):
+    except (requests.RequestException, KeyError, ValueError) as e:
         # Use old data
+        logger.error(f"Bus routes endpoint failed with error: {e}")
         routes_df = pd.read_csv("./data/routes.csv", index=False)
 
     return routes_df
