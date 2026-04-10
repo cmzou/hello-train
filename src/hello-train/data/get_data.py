@@ -24,11 +24,11 @@ def call_get_train_arrivals(map_id: int) -> dict:
             resp.raise_for_status()
             return resp.json()
         except requests.Timeout as e:
-            logger.info(f"Requests timed out, sleeping {i} out of {app_settings.max_retries}...")
+            logger.warning(f"Requests timed out, sleeping {i} out of {app_settings.max_retries}...")
             time.sleep(5)
         except requests.HTTPError as e:
             if 500 <= e.response.status_code < 600:  # Server error - retry
-                logger.info(f"Server error, sleeping {i} out of {app_settings.max_retries}...")
+                logger.warning(f"Train arrivals error, sleeping {i} out of {app_settings.max_retries}...")
                 time.sleep(5)
             else:
                 raise e
@@ -42,10 +42,11 @@ def get_train_arrivals(map_id: int) -> pd.DataFrame:
         return pd.DataFrame(arrivals_resp["ctatt"]["eta"])
     except requests.ConnectionError:
         # Likely no internet
-        return pd.DataFrame()
+        logger.error(f"Train arrivals endpoint failed with ConnectionError")
+        return None
     except (requests.RequestException, KeyError, ValueError) as e:
         logger.error(f"Train arrivals endpoint failed with error: {e}")
-        return pd.DataFrame()
+        return None
 
 def call_get_bus_arrivals(stp_id: int) -> dict:
     arrivals_url = "https://www.ctabustracker.com/bustime/api/v3/getpredictions"
@@ -63,11 +64,11 @@ def call_get_bus_arrivals(stp_id: int) -> dict:
             resp.raise_for_status()
             return resp.json()
         except requests.Timeout as e:
-            logger.info(f"Requests timed out, sleeping {i} out of {app_settings.max_retries}...")
+            logger.warning(f"Requests timed out, sleeping {i} out of {app_settings.max_retries}...")
             time.sleep(5)
         except requests.HTTPError as e:
             if 500 <= e.response.status_code < 600:  # Server error - retry
-                logger.info(f"Server error, sleeping {i} out of {app_settings.max_retries}...")
+                logger.warning(f"Server error, sleeping {i} out of {app_settings.max_retries}...")
                 time.sleep(5)
             else:
                 raise e
@@ -79,9 +80,13 @@ def get_bus_arrivals(stp_id: int) -> pd.DataFrame:
         arrivals_resp = call_get_bus_arrivals(stp_id)
 
         return pd.DataFrame(arrivals_resp["bustime-response"]["prd"])
+    except requests.ConnectionError:
+        # Likely no internet
+        logger.error(f"Bus arrivals endpoint failed with ConnectionError")
+        return None
     except (requests.RequestException, KeyError, ValueError) as e:
         logger.error(f"Bus arrivals endpoint failed with error: {e}")
-        return pd.DataFrame()
+        return None
 
 """
 Get and save necessary bus route data for querying and display
@@ -100,11 +105,11 @@ def call_get_bus_routes() -> dict:
             resp.raise_for_status()
             return resp.json()
         except requests.Timeout:
-            logger.info(f"Requests timed out, sleeping {i} out of {app_settings.max_retries}...")
+            logger.warning(f"Requests timed out, sleeping {i} out of {app_settings.max_retries}...")
             time.sleep(5)
         except requests.HTTPError as e:
             if 500 <= e.response.status_code < 600:  # Server error - retry
-                logger.info(f"Bus routes server error, sleeping {i} out of {app_settings.max_retries}...")
+                logger.warning(f"Bus routes server error, sleeping {i} out of {app_settings.max_retries}...")
                 time.sleep(5)
             else:
                 raise e

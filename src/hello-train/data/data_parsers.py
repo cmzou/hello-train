@@ -59,6 +59,9 @@ def calc_time_remaining(arrivals_data: pd.DataFrame, transport_mode: str) -> Non
 
 """
 Given a route ID and type, get the data
+
+Return:
+    None if the internet is suspected to be down
 """
 def get_and_parse_data(route_id: str, transport_mode: str) -> pd.DataFrame:
     if transport_mode == "train":
@@ -67,6 +70,9 @@ def get_and_parse_data(route_id: str, transport_mode: str) -> pd.DataFrame:
         arrivals_data = get_data.get_bus_arrivals(route_id)
     else:
         raise ValueError(f"Invalid transport_mode given: {transport_mode}")
+
+    if arrivals_data is None:
+        return None
 
     if arrivals_data.shape[0] != 0:
         parse_data(arrivals_data, transport_mode)

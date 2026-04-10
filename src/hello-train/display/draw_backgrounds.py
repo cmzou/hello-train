@@ -186,6 +186,17 @@ def write_last_updated(image: Image):
 
     return image
 
+def write_error_message(image: Image, msg: str):
+    draw = ImageDraw.Draw(image)
+    last_update_text = f"Last Updated: {util.get_current_time()}"
+    last_update_text_width = fnt_small.getbbox(last_update_text)[2]
+
+    error_message_xy = (h_pad * 2 + last_update_text_width, 0)
+
+    draw.text(error_message_xy, f"Error: {msg}", fill=train_to_colors["Red"], font=fnt_small, stroke_width=2, stroke_fill=BLACK)
+
+    return image
+
 """
 Given desired coordinates and alignment, return aligned coordinates
 """

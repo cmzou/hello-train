@@ -126,6 +126,9 @@ def main():
                 current_route = mode_settings.display_routes[current_route_i]
                 arrivals_data = data_parsers.get_and_parse_data(data_parsers.route_to_ids[current_route]["id"], data_parsers.route_to_ids[current_route]["transport_mode"])
                 image = Image.new("RGB", (inky_display.width, inky_display.height), draw_backgrounds.BLACK)
+                if arrivals_data is None:
+                    arrivals_data = pd.DataFrame()
+                    image = draw_backgrounds.write_error_message(image, "API Error Occurred")
                 image = draw_backgrounds.create_arrivals_background(inky_display, arrivals_data, image)
                 draw_backgrounds.save_image(image, os.path.join(app_settings.ui_dir, "./cta_ui.png"))
                 image_cycler.displays["cta"].set_current_image()
