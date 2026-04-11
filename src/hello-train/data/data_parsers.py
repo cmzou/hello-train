@@ -7,6 +7,16 @@ from config import mode_settings, app_settings
 
 logger = logging.getLogger(__name__)
 
+"""
+The format of this dict is:
+{
+    <user friendly name of stop>: {
+        "transport_mode": train|bus,
+        "id": stpid|staId,
+        "route_name": <user friendly name of bus>
+    }
+}
+"""
 route_to_ids = {
     "Racine": {
         "transport_mode": "train",

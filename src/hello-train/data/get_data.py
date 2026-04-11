@@ -116,11 +116,12 @@ def call_get_bus_routes() -> dict:
 
     return {}
 
-def get_bus_routes() -> pd.DataFrame:
+def get_bus_routes(save_data: bool=True) -> pd.DataFrame:
     try:
         routes_data = call_get_bus_routes()
         routes_df = pd.DataFrame(routes_data["bustime-response"]["routes"])
-        routes_df.to_csv("./data/routes.csv", index=False)
+        if save_data:
+            routes_df.to_csv("./data/routes.csv", index=False)
     except (requests.RequestException, KeyError, ValueError) as e:
         # Use old data
         logger.error(f"Bus routes endpoint failed with error: {e}")
@@ -141,10 +142,11 @@ def call_bus_route_directions(rt: str) -> dict:
     resp.raise_for_status()
     return resp.json()
 
-def get_bus_route_directions(rt: str) -> pd.DataFrame:
+def get_bus_route_directions(rt: str, save_data: bool=True) -> pd.DataFrame:
     directions_data = call_bus_route_directions(rt)
     directions_df = pd.DataFrame(directions_data["bustime-response"]["directions"])
-    directions_df.to_csv(f"./data/directions_{rt}.csv", index=False)
+    if save_data:
+        directions_df.to_csv(f"./data/directions_{rt}.csv", index=False)
 
     return directions_df
 
@@ -168,7 +170,7 @@ def call_bus_stops(rt: str, directions: list) -> dict:
 
     return stops
 
-def get_bus_stops(rt: str, directions: list) -> pd.DataFrame:
+def get_bus_stops(rt: str, directions: list, save_data: bool=True) -> pd.DataFrame:
     stops_data = call_bus_stops(rt, directions)
     # Add direction data to stops
     for d in stops_data:
@@ -176,19 +178,24 @@ def get_bus_stops(rt: str, directions: list) -> pd.DataFrame:
             stops_data[d]["bustime-response"]["stops"][i]["dir"] = d
 
     stops_df = pd.concat([pd.DataFrame(stops_data[d]["bustime-response"]["stops"]) for d in stops_data])
-    stops_df.to_csv(f"./data/stops_{rt}.csv", index=False)
+    if save_data:
+        stops_df.to_csv(f"./data/stops_{rt}.csv", index=False)
 
     return stops_df
 
 """
 Searches for bi-directional bus stop data given a search string. Defaults to searching via name.
 
+For example, to search for the stops from bus route 50, call:
+    search_call_get_bus_stop_data("50", "id", True, False)
+From there, you can get the stpid needed for route_to_ids in data_parsers.py
+
 Params:
     search_type: whether to search by route name or by route ID; acceptable values: name, id
     exact_match: bool, whether to search for exact matches or not. if not exact match, will error on multiple returns
 """
-def search_call_get_bus_stop_data(search_str: str, search_type: str="name", exact_match: bool=False) -> None:
-    routes_df = get_bus_routes()
+def search_call_get_bus_stop_data(search_str: str, search_type: str="name", exact_match: bool=False, save_data: bool=True) -> None:
+    routes_df = get_bus_routes(save_data)
 
     if search_type == "name":
         search_col = "rtnm"
@@ -212,12 +219,13 @@ def search_call_get_bus_stop_data(search_str: str, search_type: str="name", exac
     rt = search_results.iloc[0]["rt"]
 
     # Get available directions
-    directions = get_bus_route_directions(rt)["id"].to_list()
+    directions = get_bus_route_directions(rt, save_data)["id"].to_list()
     # Get all bi-directional stops
-    stops_df = get_bus_stops(rt, directions)
+    stops_df = get_bus_stops(rt, directions, save_data)
 
     stops_df["search_type"] = search_type
     stops_df["exact_match"] = exact_match
     stops_df["rt"] = rt
+    stops_df["search_str"] = search_str
 
     return stops_df
