@@ -133,7 +133,7 @@ def call_bus_route_directions(rt: str) -> dict:
 
     payload = {
         "rt": rt,
-        "key": secrets["API"]["BUS_API_KEY"],
+        "key": secrets.secrets.config["API"]["BUS_API_KEY"],
         "format": "json",
     }
 
@@ -156,7 +156,7 @@ def call_bus_stops(rt: str, directions: list) -> dict:
     for direction in directions:
         payload = {
             "rt": rt,
-            "key": secrets["API"]["BUS_API_KEY"],
+            "key": secrets.secrets.config["API"]["BUS_API_KEY"],
             "format": "json",
             "dir": direction
         }
