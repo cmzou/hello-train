@@ -99,13 +99,15 @@ class ImageDisplay:
         inky_display.show()
 
 def setup():
+    # Set up the error display first so that it'll always be available
+    error_display = ImageDisplay("./images/special/error.png")
+    displays["error"] = error_display
+
     cta_display = ImageDisplay("./ui/cta_ui.png")
     if mode_settings.enable_shuffle:
         cat_display = ImageDisplay(mode_settings.image_dir)
     else:
         cat_display = ImageDisplay(mode_settings.image_dir, shuffle_type="sequential")
-    error_display = ImageDisplay("./images/special/error.png")
 
     displays["cta"] = cta_display
     displays["cat"] = cat_display
-    displays["error"] = error_display

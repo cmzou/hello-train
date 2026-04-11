@@ -128,12 +128,12 @@ def get_bus_routes() -> pd.DataFrame:
 
     return routes_df
 
-def call_bus_route_directions(rt: str):
+def call_bus_route_directions(rt: str) -> dict:
     directions_url = "https://www.ctabustracker.com/bustime/api/v3/getdirections"
 
     payload = {
         "rt": rt,
-        "key": secrets.secrets.config["API"]["BUS_API_KEY"],
+        "key": secrets["API"]["BUS_API_KEY"],
         "format": "json",
     }
 
@@ -148,17 +148,48 @@ def get_bus_route_directions(rt: str) -> pd.DataFrame:
 
     return directions_df
 
-def get_bus_stops(rt: str, directions: list) -> dict:
-    pass
+def call_bus_stops(rt: str, directions: list) -> dict:
+    stops_url = "https://www.ctabustracker.com/bustime/api/v3/getstops"
+
+    stops = {}
+
+    for direction in directions:
+        payload = {
+            "rt": rt,
+            "key": secrets["API"]["BUS_API_KEY"],
+            "format": "json",
+            "dir": direction
+        }
+
+        resp = requests.get(stops_url, params=payload)
+        resp.raise_for_status()
+
+        stops[direction] = resp.json()
+
+    return stops
+
+def get_bus_stops(rt: str, directions: list) -> pd.DataFrame:
+    stops_data = call_bus_stops(rt, directions)
+    # Add direction data to stops
+    for d in stops_data:
+        for i in range(len(stops_data[d]["bustime-response"]["stops"])):
+            stops_data[d]["bustime-response"]["stops"][i]["dir"] = d
+
+    stops_df = pd.concat([pd.DataFrame(stops_data[d]["bustime-response"]["stops"]) for d in stops_data])
+    stops_df.to_csv(f"./data/stops_{rt}.csv", index=False)
+
+    return stops_df
 
 """
-Searches for bi-directional bus stop data given a search string.
+Searches for bi-directional bus stop data given a search string. Defaults to searching via name.
 
 Params:
     search_type: whether to search by route name or by route ID; acceptable values: name, id
     exact_match: bool, whether to search for exact matches or not. if not exact match, will error on multiple returns
 """
-def search_call_get_bus_data(search_str: str, routes_df: pd.DataFrame, search_type: str, exact_match: bool) -> None:
+def search_call_get_bus_stop_data(search_str: str, search_type: str="name", exact_match: bool=False) -> None:
+    routes_df = get_bus_routes()
+
     if search_type == "name":
         search_col = "rtnm"
     elif search_type == "id":
@@ -172,7 +203,7 @@ def search_call_get_bus_data(search_str: str, routes_df: pd.DataFrame, search_ty
         search_results = routes_df[routes_df[search_col].str.lower().str.contains(search_str.lower())]
 
     if search_results.shape[0] > 1 : # multiple results returned
-        logger.warning(f"Multiple routes returned:\n{routes_df}")
+        logger.warning(f"Multiple routes returned:\n{search_results}")
         raise ValueError("Multiple routes found. Edit the route name and try again.")
     elif search_results.shape[0] == 0:
         logger.error("No routes found.")
@@ -182,6 +213,11 @@ def search_call_get_bus_data(search_str: str, routes_df: pd.DataFrame, search_ty
 
     # Get available directions
     directions = get_bus_route_directions(rt)["id"].to_list()
+    # Get all bi-directional stops
     stops_df = get_bus_stops(rt, directions)
+
+    stops_df["search_type"] = search_type
+    stops_df["exact_match"] = exact_match
+    stops_df["rt"] = rt
 
     return stops_df
