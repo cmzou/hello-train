@@ -128,26 +128,60 @@ def get_bus_routes() -> pd.DataFrame:
 
     return routes_df
 
-def get_bus_stops(route_id: int) -> dict:
-    pass
-
-def search_call_get_bus_data(search_str: str, routes_df: pd.DataFrame) -> None:
-    search_results = routes_df[routes_df["rtnm"].str.lower().str.contains(search_str.lower)]
-
-    try:
-        # Find stop id by name
-        stops_df = get_bus_stops()
-    except:
-        pass
-
-
-    stops_url = "https://www.ctabustracker.com/bustime/api/v3/getstops"
+def call_bus_route_directions(rt: str):
     directions_url = "https://www.ctabustracker.com/bustime/api/v3/getdirections"
 
-    try:
-        # Find stop id by name
-        directions_data = requests.get(directions_url, params={**payload, "rt": route_id})
-        stops_data = requests.get(stops_url, params={**payload, "rt": route_id, "dir": direction})
+    payload = {
+        "rt": rt,
+        "key": secrets.secrets.config["API"]["BUS_API_KEY"],
+        "format": "json",
+    }
 
-    except:
-        pass
+    resp = requests.get(directions_url, params=payload)
+    resp.raise_for_status()
+    return resp.json()
+
+def get_bus_route_directions(rt: str) -> pd.DataFrame:
+    directions_data = call_bus_route_directions(rt)
+    directions_df = pd.DataFrame(directions_data["bustime-response"]["directions"])
+    directions_df.to_csv(f"./data/directions_{rt}.csv", index=False)
+
+    return directions_df
+
+def get_bus_stops(rt: str, directions: list) -> dict:
+    pass
+
+"""
+Searches for bi-directional bus stop data given a search string.
+
+Params:
+    search_type: whether to search by route name or by route ID; acceptable values: name, id
+    exact_match: bool, whether to search for exact matches or not. if not exact match, will error on multiple returns
+"""
+def search_call_get_bus_data(search_str: str, routes_df: pd.DataFrame, search_type: str, exact_match: bool) -> None:
+    if search_type == "name":
+        search_col = "rtnm"
+    elif search_type == "id":
+        search_col = "rt"
+    else:
+        raise ValueError(f"Invalid search type given: {search_type}")
+
+    if exact_match:
+        search_results = routes_df[routes_df[search_col].str.lower() == search_str.lower()]
+    else:
+        search_results = routes_df[routes_df[search_col].str.lower().str.contains(search_str.lower())]
+
+    if search_results.shape[0] > 1 : # multiple results returned
+        logger.warning(f"Multiple routes returned:\n{routes_df}")
+        raise ValueError("Multiple routes found. Edit the route name and try again.")
+    elif search_results.shape[0] == 0:
+        logger.error("No routes found.")
+        raise ValueError("No routes found. Edit the route name and try again.")
+
+    rt = search_results.iloc[0]["rt"]
+
+    # Get available directions
+    directions = get_bus_route_directions(rt)["id"].to_list()
+    stops_df = get_bus_stops(rt, directions)
+
+    return stops_df
